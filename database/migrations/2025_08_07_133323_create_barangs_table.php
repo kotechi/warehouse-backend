@@ -15,18 +15,24 @@ return new class extends Migration
             $table->id();
             $table->string('produk');
             $table->string('kodegrp');
-            $table->string('kategori_id');
+            $table->unsignedBigInteger('kategori_id');
             $table->string('status');
-            $table->string('main_produk');
-            $table->integer('stock_awal')->default(0);
-            $table->integer('stock_sekarang')->default(0);
-            $table->string('kode_qr')->unique();
+            $table->integer('stock_awal');
+            $table->integer('stock_sekarang');
+            $table->string('kode_qr');
             $table->string('line_divisi');
-            $table->date('production_date');
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
-            $table->softDeletes(); // kolom deleted_at
-            $table->timestamps();  // kolom created_at & updated_at
+            $table->string('production_date');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->string('deleted_at')->nullable();
+            $table->string('created_at')->nullable();
+            $table->string('updated_at')->nullable();
+            $table->unsignedBigInteger('main_produk')->nullable();
+
+            // $table->foreign('kategori_id')->references('id')->on('kategori');
+            // $table->foreign('created_by')->references('id')->on('user');
+            // $table->foreign('updated_by')->references('id')->on('user')->nullable();
+            // $table->foreign('main_produk')->references('id')->on('main_produk');
         });
         
     }
