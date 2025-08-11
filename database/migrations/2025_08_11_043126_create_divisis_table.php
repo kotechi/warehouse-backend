@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('divisi_users', function (Blueprint $table) {
+        Schema::create('divisis', function (Blueprint $table) {
             $table->id();
-            $table->string('kodediv');
+            $table->string('kodedivisi');
             $table->string('divisi');
             $table->integer('short');
-            $table->string('status');
-            $table->dateTime('deleted_at')->nullable();
+            $table->integer('status');
+            $table->integer('deleted_at')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('divisi_users');
+        Schema::dropIfExists('divisis');
     }
 };

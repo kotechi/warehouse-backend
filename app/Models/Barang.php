@@ -22,4 +22,21 @@ class Barang extends Model
         'updated_by',
         'deleted_at',
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+    public function divisi()
+    {
+        return $this->belongsTo(Divisi::class, 'line_divisi');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

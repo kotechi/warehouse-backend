@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -17,40 +17,26 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Debug: Check if user exists
         $user = User::where('email', $credentials['email'])->first();
-        
-        if (!$user) {
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json([
-                'message' => 'User not found',
+                'message' => 'Invalid credentials',
                 'error' => 'invalid_credentials'
             ], 401);
         }
 
-        // Debug: Check password
-        if (!Hash::check($credentials['password'], $user->password)) {
-            return response()->json([
-                'message' => 'Invalid password',
-                'error' => 'invalid_credentials'
-            ], 401);
-        }
+        // Hapus token lama (opsional, biar 1 user 1 token)
+        $user->tokens()->delete();
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->generateToken();
-            
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer'
-            ], 200);
-        }
+        $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Authentication failed',
-            'error' => 'invalid_credentials'
-        ], 401);
+            'message' => 'Login successful',
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
     }
 
     public function register(Request $request)
@@ -59,40 +45,35 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'role'=> 'string'
         ]);
 
         $user = User::create([
+            'role' => $request->role,
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
-        $token = $user->generateToken();
-
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
         ], 201);
-    }
-
-
-    public function logout(Request $request)
-    {
-        try {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json(['message' => 'Logged out successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Logout failed', 'error' => $e->getMessage()], 500);
-        }
     }
 
     public function me(Request $request)
     {
         return response()->json([
-            'user' => $request->user(),
-            'message' => 'User retrieved successfully'
+            'message' => 'User retrieved successfully',
+            'user' => $request->user()
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully'
         ], 200);
     }
 }

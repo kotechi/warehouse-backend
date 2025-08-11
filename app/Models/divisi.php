@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class kategori extends Model
+class divisi extends Model
 {
-    protected $table = 'kategoris';
-    
+    protected $table = 'divisis';
     protected $fillable = [
-        'kategori',
+        'kodedivisi',
+        'divisi',
+        'short',
         'status',
         'deleted_at'
     ];

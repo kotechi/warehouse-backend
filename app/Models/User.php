@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -62,6 +63,11 @@ class User extends Authenticatable
 
     public function generateToken() {
         return $this->createToken('auth_token')->plainTextToken;
+    }
+
+    public function jabatan()
+    {
+        return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
 
 }

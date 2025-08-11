@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Models\Kategori;
 use App\Http\Resources\Api\V1\BarangResource;
 use App\Events\BarangUpdated;
 
@@ -12,6 +13,7 @@ class BarangController extends Controller
 {
     public function index()
     {
+        $barangs = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')->get();
         return BarangResource::collection(Barang::all());
     }
 

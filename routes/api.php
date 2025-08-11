@@ -14,6 +14,10 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn']);
     Route::post('barang/{id}/stock-out', [BarangController::class, 'stockOut']);
 
+    Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
+    Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
+
+    Route::apiResource('/user', UserController::class);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
