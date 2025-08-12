@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('kodedivisi');
             $table->string('divisi');
-            $table->integer('short');
-            $table->integer('status');
+            $table->integer('short')->default(0);
+            $table->string('status');
             $table->integer('deleted_at')->nullable();
             $table->timestamps();
         });

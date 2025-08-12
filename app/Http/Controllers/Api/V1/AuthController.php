@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -26,17 +27,24 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Hapus token lama (opsional, biar 1 user 1 token)
+        // Hapus token lama
         $user->tokens()->delete();
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        // Buat token baru
+        $newToken = $user->createToken('api_token');
+        $plainToken = $newToken->plainTextToken;
+
+        // Simpan expires_at pakai Carbon
+        $newToken->accessToken->expires_at = Carbon::now()->addHour(config('sanctum.expiration'));
+        $newToken->accessToken->save();
 
         return response()->json([
             'message' => 'Login successful',
             'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
+            'token' => $plainToken,
+            'token_type' => 'Bearer',
+            'expires_at' => $newToken->accessToken->expires_at
+        ]);
     }
 
     public function register(Request $request)
