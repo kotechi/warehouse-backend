@@ -14,63 +14,82 @@ class BarangController extends Controller
     public function index()
     {
         $barangs = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')->get();
-        return BarangResource::collection(Barang::all());
+        return BarangResource::collection($barangs);
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'produk' => 'required|string|max:255',
+            'kodegrp' => 'required|string|max:255',
+            'kategori_id' => 'required',
+            'status' => 'required|string|max:255',
+            'main_produk' => 'nullable',
             'stock' => 'required|integer|min:0',
-            'nama_barang' => 'required|string|max:255',
-            'line_divisi' => 'required',
-            'kode_qr' => 'required|string|max:255|unique:barangs,kode_qr',
-            'production_date' => 'required|date',
+            'kode_qr' => 'required|string|max:255',
+            'line_divisi' => 'required|string|max:255',
+            'production_date' => 'required|date_format:Y-m-d',
+            'user_id' => 'required',
         ]);
+        
 
         $barang = Barang::create([
-            'nama_barang' => $request->nama_barang,
+            'produk' => $request->produk,
+            'kodegrp' => $request->kodegrp,
+            'kategori_id' => $request->kategori_id,
+            'status' => $request->status,
             'line_divisi' => $request->line_divisi,
             'kode_qr' => $request->kode_qr,
             'production_date' => $request->production_date,
             'stock_awal' => $request->stock,
             'stock_sekarang' => $request->stock,
+            'created_by' => $request->user_id, // Assuming you have authentication
+            'main_produk' => $request->main_produk,
         ]);
 
-        event(new BarangUpdated($barang, 'created'));
-        
+        $barangs = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')->get();
+        return BarangResource::collection($barangs);
         return response()->json([
             'message' => 'Barang created successfully',
-            'data' => new BarangResource($barang)
+            'data' => BarangResource::collection($barangs)
         ], 201);
     }
 
     public function show(string $id)
     {
-        $barang = Barang::findOrFail($id);
-        return new BarangResource($barang);
+        $barang = Barang::with('kategori', 'createdBy', 'updatedBy')->findOrFail($id);
     }
 
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'line_divisi' => 'required',
+            'produk' => 'required|string|max:255',
+            'kodegrp' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'status' => 'required|string|max:255',
+            'line_divisi' => 'required|string|max:255',
             'kode_qr' => 'required|string|max:255|unique:barangs,kode_qr,' . $id,
-            'production_date' => 'required|date',
-            'stock' => 'required|integer|min:0', 
+            'production_date' => 'required|date_format:Y-m-d',
+            'stock' => 'required|integer|min:0',
+            'main_produk' => 'nullable|exists:main_produks,id',
+            'user_id' => 'required',
         ]);
         
         $barang = Barang::findOrFail($id);
         $barang->update([
-            'nama_barang' => $request->nama_barang,
+            'produk' => $request->produk,
+            'kodegrp' => $request->kodegrp,
+            'kategori_id' => $request->kategori_id,
+            'status' => $request->status,
             'line_divisi' => $request->line_divisi,
             'kode_qr' => $request->kode_qr,
             'production_date' => $request->production_date,
             'stock_awal' => $request->stock,
             'stock_sekarang' => $request->stock,
+            'updated_by' => $request->user_id, // Assuming you have authentication
+            'main_produk' => $request->main_produk,
         ]);
 
-        event(new BarangUpdated($barang, 'updated'));
         
         return response()->json([
             'message' => 'Barang updated successfully',
@@ -83,7 +102,6 @@ class BarangController extends Controller
         $barang = Barang::findOrFail($id);
         $barang->delete();
         
-        event(new BarangUpdated($barang, 'deleted'));
         
         return response()->json([
             'message' => 'Barang deleted successfully'
@@ -98,9 +116,9 @@ class BarangController extends Controller
 
         $barang = Barang::findOrFail($id);
         $barang->stock_sekarang += $request->stock;
+        $barang->updated_by = auth()->id(); // Track who updated the stock
         $barang->save();
 
-        event(new BarangUpdated($barang, 'stock_in'));
 
         return response()->json([
             'message' => 'Stock updated successfully',
@@ -121,9 +139,9 @@ class BarangController extends Controller
         }
 
         $barang->stock_sekarang -= $request->stock;
+        $barang->updated_by = auth()->id(); // Track who updated the stock
         $barang->save();
         
-        event(new BarangUpdated($barang, 'stock_out'));
         
         return response()->json([
             'message' => 'Stock updated successfully',

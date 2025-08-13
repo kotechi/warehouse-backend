@@ -35,7 +35,7 @@ class AuthController extends Controller
         $plainToken = $newToken->plainTextToken;
 
         // Simpan expires_at pakai Carbon
-        $newToken->accessToken->expires_at = Carbon::now()->addHour(config('sanctum.expiration'));
+        $newToken->accessToken->expires_at = Carbon::now()->addMinute(config('sanctum.expiration'));
         $newToken->accessToken->save();
 
         return response()->json([

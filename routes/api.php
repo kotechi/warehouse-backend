@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 
 
 Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], function () {
-    Route::apiResource('barang', BarangController::class);
+    Route::apiResource('barang', BarangController::class)->middleware('auth:sanctum');
     Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn']);
     Route::post('barang/{id}/stock-out', [BarangController::class, 'stockOut']);
 
