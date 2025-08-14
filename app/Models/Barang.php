@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use SoftDeletes;
 class Barang extends Model
 {
+    
     protected $fillable = [
-        'id',
         'produk',
         'kodegrp',
         'kategori_id',
@@ -20,7 +20,19 @@ class Barang extends Model
         'production_date',
         'created_by',
         'updated_by',
-        'deleted_at',
+        'divisi_id',
+    ];
+
+    // Cast attributes to proper types
+    protected $casts = [
+        'kategori_id' => 'integer',
+        'main_produk' => 'integer',
+        'stock_awal' => 'integer',
+        'stock_sekarang' => 'integer',
+        'created_by' => 'integer',
+        'updated_by' => 'integer',
+        'production_date' => 'date',
+        'deleted_at' => 'datetime',
     ];
 
     public function kategori()

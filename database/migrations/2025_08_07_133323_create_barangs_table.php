@@ -19,14 +19,13 @@ return new class extends Migration
             $table->string('status');
             $table->integer('stock_awal');
             $table->integer('stock_sekarang');
-            $table->string('kode_qr');
-            $table->string('line_divisi');
-            $table->string('production_date');
+            $table->string('kode_qr')->unique();
+            $table->integer('line_divisi');
+            $table->date('production_date');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->string('deleted_at')->nullable();
-            $table->string('created_at')->nullable();
-            $table->string('updated_at')->nullable();
+            $table->timestamps();
             $table->unsignedBigInteger('main_produk')->nullable();
 
             // $table->foreign('kategori_id')->references('id')->on('kategori');

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->integer('jabatan_id')->nullable();
+            $table->integer('divisi_id')->nullable();
             $table->string('name');
             $table->string('email')->unique();
-            $table->integer('divisi')->nullable();
             $table->string('role')->default('admingudang'); // Default role set to 'user'
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

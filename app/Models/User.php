@@ -10,8 +10,7 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
-{
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+{/** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
@@ -23,7 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'jabatan_id',
+        'divisi_id',
     ];
 
     /**
@@ -61,13 +62,10 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function generateToken() {
-        return $this->createToken('auth_token')->plainTextToken;
-    }
-
     public function jabatan()
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
 
 }
+

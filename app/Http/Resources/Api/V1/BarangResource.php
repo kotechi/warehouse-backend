@@ -42,6 +42,7 @@ class BarangResource extends JsonResource
                 'email' => $this->updatedBy->email,
             ]
             : null,
+            'status' => $this->status,
             'namaBarang' => $this->produk,
             'kodeQr' => $this->kode_qr,
             'lineDivisi' => $this->line_divisi,

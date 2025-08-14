@@ -13,6 +13,7 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'frontend_url' => env('APP_FRONTEND_URL'),
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
