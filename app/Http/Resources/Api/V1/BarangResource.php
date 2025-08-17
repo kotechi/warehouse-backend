@@ -34,18 +34,52 @@ class BarangResource extends JsonResource
                 'id' => $this->createdBy->id,
                 'name' => $this->createdBy->name,
                 'email' => $this->createdBy->email,
+                'jabatan' => $this->createdBy->jabatan
+                ? [
+                    'id' => $this->createdBy->jabatan->id,
+                    'name' => $this->createdBy->jabatan->jabatan,
+                ] : null,
+                'divisi' => $this->createdBy->divisi
+                ? [
+                    'id' => $this->createdBy->divisi->id,
+                    'kodedivisi' => $this->createdBy->divisi->kodedivisi,
+                    'divisi' => $this->createdBy->divisi->divisi,
+                    'short' => $this->createdBy->divisi->short,
+                    'status' => $this->createdBy->divisi->status,
+                ] : null,
             ],
             'updatedBy' => $this->updatedBy
             ? [
                 'id' => $this->updatedBy->id,
                 'name' => $this->updatedBy->name,
                 'email' => $this->updatedBy->email,
+                'jabatan' => $this->updatedBy->jabatan
+                ? [
+                    'id' => $this->updatedBy->jabatan->id,
+                    'name' => $this->updatedBy->jabatan->jabatan,
+                ] : null,
+                'divisi' => $this->updatedBy->divisi
+                ? [
+                    'id' => $this->updatedBy->divisi->id,
+                    'kodedivisi' => $this->updatedBy->divisi->kodedivisi,
+                    'divisi' => $this->updatedBy->divisi->divisi,
+                    'short' => $this->updatedBy->divisi->short,
+                    'status' => $this->updatedBy->divisi->status,
+                ] : null,
             ]
             : null,
             'status' => $this->status,
             'namaBarang' => $this->produk,
             'kodeQr' => $this->kode_qr,
-            'lineDivisi' => $this->line_divisi,
+            'kodeGrp' => $this->kodegrp,
+            'lineDivisi' => $this->divisi
+            ? [
+                'id' => $this->divisi->id,
+                'kodedivisi' => $this->divisi->kodedivisi,
+                'divisi' => $this->divisi->divisi,
+                'short' => $this->divisi->short,
+                'status' => $this->divisi->status,
+            ] : null,
             'productionDate' => $this->production_date,
             'stockAwal' => $this->stock_awal,
             'stockSekarang' => $this->stock_sekarang,

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-use Illuminate\Support\Facades\Validator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,6 +9,7 @@ use App\Models\Kategori;
 use App\Http\Resources\Api\V1\BarangResource;
 use App\Events\BarangUpdated;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
@@ -18,6 +18,13 @@ class BarangController extends Controller
         $barangs = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')->get();
         return BarangResource::collection($barangs);
     }
+
+public function show(string $id)
+{
+    $barang = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')
+                    ->findOrFail($id);
+    return new BarangResource($barang);
+}
 
     public function store(Request $request)
     {
@@ -42,6 +49,7 @@ class BarangController extends Controller
             ], 422);
         }
 
+        $newid = Barang::max('id') + 1; // Get the next ID for the new Barang
         try {
             $barang = Barang::create([
                 'produk' => $request->produk,
@@ -51,7 +59,7 @@ class BarangController extends Controller
                 'main_produk' => $request->main_produk,
                 'stock_awal' => $request->stock,
                 'stock_sekarang' => $request->stock,
-                'kode_qr' => Config::get('services.frontend_url'). '/qr/' . $request->kodegrp . '/' . $request->produk,
+                'kode_qr' => Config::get('services.frontend_url'). '/qr/' . $newid,
                 'line_divisi' => $request->line_divisi,
                 'production_date' => $request->production_date,
                 'created_by' => $request->created_by,
@@ -71,39 +79,34 @@ class BarangController extends Controller
             ], 500);
         }
     }
-    public function show(string $id)
-    {
-        $barang = Barang::with('kategori', 'createdBy', 'updatedBy')->findOrFail($id);
-    }
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+    
+        $validator = Validator::make($request->all(), [
             'produk' => 'required|string|max:255',
             'kodegrp' => 'required|string|max:255',
-            'kategori_id' => 'required|exists:kategoris,id',
+            'kategori_id' => 'required|integer',
             'status' => 'required|string|max:255',
-            'line_divisi' => 'required|max:255',
-            'kode_qr' => 'required|string|max:255|unique:barangs,kode_qr,' . $id,
             'production_date' => 'required',
-            'stock' => 'required|integer|min:0',
-            'main_produk' => 'nullable|exists:main_produks,id',
-            'user_id' => 'required',
+            'user_id' => 'required|integer',
         ]);
-        
+     
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
         $barang = Barang::findOrFail($id);
         $barang->update([
             'produk' => $request->produk,
             'kodegrp' => $request->kodegrp,
             'kategori_id' => $request->kategori_id,
             'status' => $request->status,
-            'line_divisi' => $request->line_divisi,
-            'kode_qr' => $request->kode_qr,
             'production_date' => $request->production_date,
-            'stock_awal' => $request->stock,
-            'stock_sekarang' => $request->stock,
-            'updated_by' => $request->user_id, // Assuming you have authentication
-            'main_produk' => $request->main_produk,
+            'updated_by' => $request->user_id,  
         ]);
 
         

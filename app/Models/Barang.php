@@ -23,6 +23,8 @@ class Barang extends Model
         'divisi_id',
     ];
 
+        
+
     // Cast attributes to proper types
     protected $casts = [
         'kategori_id' => 'integer',

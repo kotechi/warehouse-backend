@@ -25,9 +25,6 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials'
             ], 401);
         }
-
-        // Delete existing tokens
-        $user->tokens()->delete();
         
         // Create new token (simpler version without expiration parameter for debugging)
         $token = $user->createToken('api_token');
@@ -73,20 +70,43 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        // Load relationships only if they exist
-        $user = $request->user();
-        
-        // Try to load relationships, but handle if they don't exist
         try {
+            // Get the current access token
+            $currentToken = $request->user()->currentAccessToken();
+            
+            // Check if token exists and is not expired
+            if (!$currentToken) {
+                return response()->json([
+                    'message' => 'Token not found'
+                ], 401);
+            }
+
+            // Check if token has expired (if expires_at is set)
+            if ($currentToken->expires_at && Carbon::now()->isAfter($currentToken->expires_at)) {
+                // Delete the expired token
+                $currentToken->delete();
+                
+                return response()->json([
+                    'message' => 'Token expired',
+                    'error' => 'TOKEN_EXPIRED'
+                ], 401);
+            }
+
+            // Load relationships only if they exist
+            $user = $request->user();
             $user->load(['jabatan', 'divisi']);
+            
+            return response()->json([
+                'message' => 'User retrieved successfully',
+                'user' => $user->makeHidden(['created_at', 'updated_at'])
+            ], 200);
+            
         } catch (\Exception $e) {
-            // If relationships don't exist, just continue without them
+            return response()->json([
+                'message' => 'Token expired or invalid',
+                'error' => 'TOKEN_EXPIRED'
+            ], 401);
         }
-        
-        return response()->json([
-            'message' => 'User retrieved successfully',
-            'user' => $user->makeHidden(['created_at', 'updated_at'])
-        ], 200);
     }
 
     public function logout(Request $request)
