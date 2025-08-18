@@ -8,10 +8,6 @@ class Jabatan extends Model
 {
     protected $table = 'jabatans';
     protected $fillable = [
-        'kodejabatan',
         'jabatan',
-        'short',
-        'status',
-        'deleted_at'
     ];    
 }
