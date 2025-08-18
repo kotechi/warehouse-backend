@@ -83,7 +83,7 @@ class JabatanController extends Controller
      */
     public function destroy(string $id)
     {
-        $jabatan = Jabatan::fundOrFail($id);
+        $jabatan = Jabatan::findOrFail($id);
         $jabatan->delete();
         return response()->json([
             'message' => 'berhasil hapus'
