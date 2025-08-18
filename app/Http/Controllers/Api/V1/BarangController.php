@@ -19,12 +19,12 @@ class BarangController extends Controller
         return BarangResource::collection($barangs);
     }
 
-public function show(string $id)
-{
-    $barang = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')
-                    ->findOrFail($id);
-    return new BarangResource($barang);
-}
+    public function show(string $id)
+    {
+        $barang = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')
+                        ->findOrFail($id);
+        return new BarangResource($barang);
+    }
 
     public function store(Request $request)
     {

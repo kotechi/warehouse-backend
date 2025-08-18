@@ -17,8 +17,9 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
     Route::apiResource('divisi', DivisiController::class)->middleware('auth:sanctum');
+    Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
+    Route::apiResource('user', UserController::class)->middleware('auth:sanctum');
     
-    Route::apiResource('/user', UserController::class);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

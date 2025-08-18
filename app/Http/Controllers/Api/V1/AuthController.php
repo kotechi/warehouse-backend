@@ -57,7 +57,6 @@ class AuthController extends Controller
             'divisi_id' => $validated['divisi_id'] ?? null,
         ]);
 
-        // Create token
         $token = $user->createToken('api_token');
 
         return response()->json([
@@ -71,17 +70,14 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         try {
-            // Get the current access token
             $currentToken = $request->user()->currentAccessToken();
             
-            // Check if token exists and is not expired
             if (!$currentToken) {
                 return response()->json([
                     'message' => 'Token not found'
                 ], 401);
             }
 
-            // Check if token has expired (if expires_at is set)
             if ($currentToken->expires_at && Carbon::now()->isAfter($currentToken->expires_at)) {
                 // Delete the expired token
                 $currentToken->delete();
@@ -92,7 +88,6 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            // Load relationships only if they exist
             $user = $request->user();
             $user->load(['jabatan', 'divisi']);
             
