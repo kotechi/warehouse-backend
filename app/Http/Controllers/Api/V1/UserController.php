@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -40,6 +41,8 @@ class UserController extends Controller
             ], 422);
         }
 
+        // Get the validated data
+        $validated = $validator->validated();
 
         $user = User::create([
             'role' => $validated['role'],
@@ -49,8 +52,10 @@ class UserController extends Controller
             'jabatan_id' => $validated['jabatan_id'] ?? null,
             'divisi_id' => $validated['divisi_id'] ?? null,
         ]);
+
         return response()->json([
-            'message' => 'User created successfully'
+            'message' => 'User created successfully',
+            'user' => $user
         ], 201);
     }
 
