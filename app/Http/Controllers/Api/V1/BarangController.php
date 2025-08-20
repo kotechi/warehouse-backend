@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Models\AuditLog;
 use App\Models\Kategori;
 use App\Http\Resources\Api\V1\BarangResource;
 use App\Events\BarangUpdated;
@@ -131,13 +132,26 @@ class BarangController extends Controller
     {
         $request->validate([
             'stock' => 'required|integer|min:1',
+            'type' => 'required|string',
+            'deskripsi' => 'required|string',
+            'user_id' => 'required|integer'
         ]);
 
         $barang = Barang::findOrFail($id);
+        $auditlog = AuditLog::create([
+            'user_id' => $request->user_id,
+            'type' => $request->type,
+            'barang_id' => $id,
+            'deskripsi' => $request->deskripsi,
+            'old_values' => $barang->stock_sekarang,
+            'new_values' => $barang->stock_sekarang += $request->stock
+        ]);
         $barang->stock_sekarang += $request->stock;
         $barang->updated_by = auth()->id(); // Track who updated the stock
         $barang->save();
+        
 
+        
 
         return response()->json([
             'message' => 'Stock updated successfully',
@@ -149,7 +163,11 @@ class BarangController extends Controller
     {
         $request->validate([
             'stock' => 'required|integer|min:1',
+            'type' => 'required|string',
+            'deskripsi' => 'required|string',
+            'user_id' => 'required|integer'
         ]);
+        
 
         $barang = Barang::findOrFail($id);
         
@@ -161,6 +179,15 @@ class BarangController extends Controller
         $barang->updated_by = auth()->id(); // Track who updated the stock
         $barang->save();
         
+        $auditlog = AuditLog::create([
+            'user_id' => $request->user_id,
+            'type' => $request->type,
+            'barang_id' => $id,
+            'deskripsi' => $request->deskripsi,
+
+            'old_values' => $barang->stock_sekarang,
+            'new_values' => $barang->stock_sekarang -= $request->stock
+        ]);
         
         return response()->json([
             'message' => 'Stock updated successfully',

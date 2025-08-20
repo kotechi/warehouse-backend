@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use App\Models\User;
+use App\Http\Resources\Api\V1\UserResource;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -67,43 +68,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function me(Request $request)
-    {
-        try {
-            $currentToken = $request->user()->currentAccessToken();
-            
-            if (!$currentToken) {
-                return response()->json([
-                    'message' => 'Token not found'
-                ], 401);
-            }
-
-            if ($currentToken->expires_at && Carbon::now()->isAfter($currentToken->expires_at)) {
-                // Delete the expired token
-                $currentToken->delete();
-                
-                return response()->json([
-                    'message' => 'Token expired',
-                    'error' => 'TOKEN_EXPIRED'
-                ], 401);
-            }
-
-            $user = $request->user();
-            $user->load(['jabatan', 'divisi']);
-            
-            return response()->json([
-                'message' => 'User retrieved successfully',
-                'user' => $user->makeHidden(['created_at', 'updated_at'])
-            ], 200);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Token expired or invalid',
-                'error' => 'TOKEN_EXPIRED'
-            ], 401);
-        }
-    }
-
+    
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -112,7 +77,7 @@ class AuthController extends Controller
             'message' => 'Logged out successfully'
         ], 200);
     }
-
+    
     public function logoutAll(Request $request)
     {
         $request->user()->tokens()->delete();
@@ -131,11 +96,75 @@ class AuthController extends Controller
         
         // Create new token
         $token = $user->createToken('api_token');
-
+        
         return response()->json([
             'message' => 'Token refreshed successfully',
             'token' => $token->plainTextToken,
             'token_type' => 'Bearer',
         ]);
+    }
+    public function me(Request $request)
+    {
+        try {
+            $currentToken = $request->user()->currentAccessToken();
+            
+            if (!$currentToken) {
+                return response()->json([
+                    'message' => 'Token not found'
+                ], 401);
+            }
+    
+            if ($currentToken->expires_at && Carbon::now()->isAfter($currentToken->expires_at)) {
+                // Delete the expired token
+                $currentToken->delete();
+                
+                return response()->json([
+                    'message' => 'Token expired',
+                    'error' => 'TOKEN_EXPIRED'
+                   ], 401);
+            }
+    
+            $user = $request->user();
+            $user->load(['jabatan', 'divisi']);
+            return new UserResource($user);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Token expired or invalid',
+                'error' => 'TOKEN_EXPIRED'
+            ], 401);
+        }
+    }
+    public function update(Request $request) {
+        try {
+            $user = $request->user();
+            $validated = $request->validate([
+                'name' => 'sometimes|string',
+                'email' => 'sometimes|string|email',
+                'password' => 'sometimes|string|confirmed'
+            ]);
+
+            $updateData = [];
+            if (isset($validated['name'])) {
+                $updateData['name'] = $validated['name'];
+            }
+            if (isset($validated['email'])) {
+                $updateData['email'] = $validated['email'];
+            }
+            if (isset($validated['password'])) {
+                $updateData['password'] = Hash::make($validated['password']);
+            }
+
+            $user->update($updateData);
+
+            return response()->json([
+                'message' => 'Berhasil update'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'gagal update',
+                'error' => $e->getMessage()
+            ], 422);
+        }
     }
 }

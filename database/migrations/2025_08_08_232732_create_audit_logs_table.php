@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('type');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('produk_id');
-            $table->string('deskripsi');
-            $table->unsignedBigInteger('updated_by');
-            $table->dateTime('updated_at')->nullable();
+            $table->unsignedBigInteger('barang_id');
+            $table->unsignedBigInteger('old_values');
+            $table->unsignedBigInteger('new_values');
+            $table->string('deskripsi')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
 
             // $table->foreign('user_id')->references('id')->on('user');
             // $table->foreign('produk_id')->references('id')->on('ref_produk');

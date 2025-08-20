@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AuditLog;
-
+use App\Http\Resources\Api\V1\AuditLogResource;
 class AuditLogController extends Controller
 {
     /**
@@ -13,7 +13,8 @@ class AuditLogController extends Controller
      */
     public function index()
     {
-        //
+        $auditlogs = AuditLog::with('barang', 'user')->get();
+        return AuditLogResource::collection($auditlogs);
     }
 
     /**
@@ -29,7 +30,7 @@ class AuditLogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**

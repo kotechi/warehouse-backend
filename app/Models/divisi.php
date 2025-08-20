@@ -10,7 +10,6 @@ class divisi extends Model
     protected $fillable = [
         'kodedivisi',
         'divisi',
-        'short',
         'status',
         'deleted_at'
     ];

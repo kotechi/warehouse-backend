@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('stock_awal');
             $table->integer('stock_sekarang');
             $table->string('kode_qr')->unique();
-            $table->integer('line_divisi');
+            $table->integer('line_divisi')->default(1);
             $table->date('production_date');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
