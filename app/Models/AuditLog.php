@@ -14,6 +14,7 @@ class AuditLog extends Model
         'old_values',
         'new_values',
         'created_at',
+        'updated_by'
     ];
 
     public function barang()
