@@ -80,22 +80,18 @@ class AuditLogController extends Controller
                 "data" => $stock_saat_ini
             ]);
         }
-        // $auditlogs->create([
-        //     'updated_by' => $request->user_id,
-        //     'user_id' => $request->user_id,
-        //     'type' => $request->type,
-        //     'deskripsi' => $request->deskripsi,
-        //     'old_values' => $auditlogs->new_values,
-        //     'type' => $request->type,
-        //     'barang_id' => $barang_id,
-        // ]);
+        $auditlogs->create([
+            'updated_by' => $request->user_id,
+            'user_id' => $request->user_id,
+            'type' => $request->type,
+            'deskripsi' => $request->deskripsi,
+            'old_values' => $auditlogs->new_values,
+            'type' => $request->type,
+            'barang_id' => $barang_id,
+        ]);
 
-        // $barang->update([
-        //     'stock_sekarang' => $request->  
-        // ]);
         
-        // You may want to update the model here as well
-        // $auditlogs->update($request->all());
+        $auditlogs->update($request->all());
     }
 
     /**
