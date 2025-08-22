@@ -128,7 +128,7 @@ class BarangController extends Controller
         ]);
     }
 
-    public function stockIn(Request $request, string $id)
+    public function stockIn(Request $request, $id)
     {
         $request->validate([
             'stock' => 'required|integer|min:1',
@@ -147,12 +147,9 @@ class BarangController extends Controller
             'new_values' => $barang->stock_sekarang += $request->stock
         ]);
         $barang->stock_sekarang += $request->stock;
-        $barang->updated_by = auth()->id(); // Track who updated the stock
+        $barang->updated_by = $request->user_id; // Track who updated the stock
         $barang->save();
         
-
-        
-
         return response()->json([
             'message' => 'Stock updated successfully',
             'data' => new BarangResource($barang),
@@ -176,7 +173,7 @@ class BarangController extends Controller
         }
 
         $barang->stock_sekarang -= $request->stock;
-        $barang->updated_by = auth()->id(); // Track who updated the stock
+        $barang->updated_by = $request->user_id; // Track who updated the stock
         $barang->save();
         
         $auditlog = AuditLog::create([
