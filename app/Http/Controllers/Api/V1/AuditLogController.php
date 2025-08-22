@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AuditLog;
 use App\Models\Barang;
+use App\Models\User;
 use App\Http\Resources\Api\V1\AuditLogResource;
 class AuditLogController extends Controller
 {
@@ -14,7 +15,12 @@ class AuditLogController extends Controller
      */
     public function index()
     {
-        $auditlogs = AuditLog::with('barang', 'user')->get();
+        $auditlogs = AuditLog::with([
+            'barang',
+            'user.divisi',
+            'user.jabatan'
+        ])->get();
+
         return AuditLogResource::collection($auditlogs);
     }
 
@@ -39,7 +45,13 @@ class AuditLogController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $auditlog = AuditLog::with([
+            'barang',
+            'user.divisi',
+            'user.jabatan'
+        ])->findOrFail($id);
+
+        return new AuditLogResource($auditlog);
     }
 
     /**
@@ -55,44 +67,44 @@ class AuditLogController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $auditlogs = AuditLog::findOrFail($id);
-        $barang_id = $auditlogs->barang_id;
-        $barang = Barang::findOrFail($id);
-        
+        $auditlog = AuditLog::findOrFail($id);
+        $barang = Barang::findOrFail($auditlog->barang_id);
 
         $request->validate([
             'stock' => 'required|integer',
-            'type' => 'required|string',
+            'type' => 'required|string|in:Stock In,Stock Out',
             'deskripsi' => 'required|string',
-            'user_id' => 'integer'
+            'user_id' => 'required|integer'
         ]);
 
-        if($request->type = "Stock In") {
-            $stock_saat_ini = $barang->stock_sekarang-$auditlogs->new_values;
-            return response()->json([
-                "message" => "stockin",
-                "data" => $stock_saat_ini
-            ]);
-        } else if($request->type = "Stock Out") {
-            $stock_saat_ini = $barang->stock_sekarang+$auditlogs->new_values;
-            return response()->json([
-                "message" => "stocout",
-                "data" => $stock_saat_ini
-            ]);
+        if ($request->type === "Stock In") {
+            $newStock = $barang->stock_sekarang + $request->stock;
+        } else { // Stock Out
+            $newStock = $barang->stock_sekarang - $request->stock;
         }
-        $auditlogs->create([
+
+        // update barang
+        $barang->update([
+            'stock_sekarang' => $newStock
+        ]);
+
+        // update audit log
+        $auditlog->update([
             'updated_by' => $request->user_id,
             'user_id' => $request->user_id,
             'type' => $request->type,
             'deskripsi' => $request->deskripsi,
-            'old_values' => $auditlogs->new_values,
-            'type' => $request->type,
-            'barang_id' => $barang_id,
+            'old_values' => $auditlog->new_values,
+            'new_values' => $request->stock,
         ]);
 
-        
-        $auditlogs->update($request->all());
+        return response()->json([
+            "message" => "Stock updated",
+            "stock" => $newStock,
+            "auditlog" => $auditlog
+        ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
