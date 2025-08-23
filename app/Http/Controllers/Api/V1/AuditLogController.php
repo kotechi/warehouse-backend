@@ -88,7 +88,7 @@ class AuditLogController extends Controller
             'stock_sekarang' => $newStock
         ]);
 
-        // update audit log
+        // create audit log
         $auditlog->create([
             'user_id' => $request->user_id,
             'type' => $request->type,
