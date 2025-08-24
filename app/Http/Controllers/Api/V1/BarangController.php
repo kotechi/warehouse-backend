@@ -167,7 +167,6 @@ class BarangController extends Controller
             'deskripsi' => 'required|string',
             'user_id' => 'required|integer'
         ]);
-        
 
         $barang = Barang::findOrFail($id);
         
@@ -175,18 +174,22 @@ class BarangController extends Controller
             return response()->json(['message' => 'Insufficient stock'], 400);
         }
 
+        // Store old stock value before updating
+        $oldStock = $barang->stock_sekarang;
+        
+        // Update stock once
         $barang->stock_sekarang -= $request->stock;
-        $barang->updated_by = auth()->id(); // Track who updated the stock
+        $barang->updated_by = auth()->id();
         $barang->save();
         
+        // Create audit log with correct values
         $auditlog = AuditLog::create([
             'user_id' => $request->user_id,
             'type' => $request->type,
             'barang_id' => $id,
             'deskripsi' => $request->deskripsi,
-
-            'old_values' => $barang->stock_sekarang,
-            'new_values' => $barang->stock_sekarang -= $request->stock
+            'old_values' => $oldStock,
+            'new_values' => $barang->stock_sekarang  // Use updated stock value
         ]);
         
         return response()->json([
