@@ -89,13 +89,13 @@ class AuditLogController extends Controller
         ]);
 
         // update audit log
-        $auditlog->update([
-            'updated_by' => $request->user_id,
+        $auditlog->create([
             'user_id' => $request->user_id,
             'type' => $request->type,
             'deskripsi' => $request->deskripsi,
             'old_values' => $auditlog->new_values,
             'new_values' => $request->stock,
+            'barang_id' => $auditlog->barang_id
         ]);
 
         return response()->json([
