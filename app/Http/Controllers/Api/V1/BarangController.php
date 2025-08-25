@@ -144,7 +144,7 @@ class BarangController extends Controller
             'barang_id' => $id,
             'deskripsi' => $request->deskripsi,
             'old_values' => $barang->stock_sekarang,
-            'new_values' => $barang->stock_sekarang += $request->stock,
+            'new_values' => $barang->stock_sekarang + $request->stock,
             'input_values' => $request->stock
         ]);
         $barang->stock_sekarang += $request->stock;
