@@ -19,6 +19,8 @@ class AuditLogResource extends JsonResource
             'deskripsi' => $this->deskripsi,
             'newValues' => $this->new_values,
             'oldValues' => $this->old_values,
+            'inputValus' => $this->input_values,
+            'inputValues' => $this->new_values-$this->old_values,
             'user' => [
                 'userId'     => $this->user->id,
                 'userName'   => $this->user->name,

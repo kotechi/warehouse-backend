@@ -74,7 +74,7 @@ class AuditLogController extends Controller
             'stock' => 'required|integer',
             'type' => 'required|string|in:Stock In,Stock Out',
             'deskripsi' => 'required|string',
-            'user_id' => 'required|integer'
+            'user_id' => 'required|integer',
         ]);
 
         if ($request->type === "Stock In") {
@@ -95,6 +95,7 @@ class AuditLogController extends Controller
             'deskripsi' => $request->deskripsi,
             'old_values' => $auditlog->new_values,
             'new_values' => $request->stock,
+            'input_values' => $request->stock,
             'barang_id' => $auditlog->barang_id
         ]);
 

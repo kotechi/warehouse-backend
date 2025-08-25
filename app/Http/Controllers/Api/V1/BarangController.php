@@ -144,15 +144,13 @@ class BarangController extends Controller
             'barang_id' => $id,
             'deskripsi' => $request->deskripsi,
             'old_values' => $barang->stock_sekarang,
-            'new_values' => $barang->stock_sekarang += $request->stock
+            'new_values' => $barang->stock_sekarang += $request->stock,
+            'input_values' => $request->stock
         ]);
         $barang->stock_sekarang += $request->stock;
         $barang->updated_by = auth()->id(); // Track who updated the stock
         $barang->save();
         
-
-        
-
         return response()->json([
             'message' => 'Stock updated successfully',
             'data' => new BarangResource($barang),
@@ -189,7 +187,8 @@ class BarangController extends Controller
             'barang_id' => $id,
             'deskripsi' => $request->deskripsi,
             'old_values' => $oldStock,
-            'new_values' => $barang->stock_sekarang  // Use updated stock value
+            'new_values' => $barang->stock_sekarang,
+            'input_values' => $request->stock
         ]);
         
         return response()->json([
