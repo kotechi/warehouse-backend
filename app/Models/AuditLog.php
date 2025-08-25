@@ -13,6 +13,7 @@ class AuditLog extends Model
         'deskripsi',
         'old_values',
         'new_values',
+        'input_values',
         'created_at',
         'updated_by'
     ];

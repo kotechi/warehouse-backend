@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('barang_id');
             $table->unsignedBigInteger('old_values');
             $table->unsignedBigInteger('new_values');
+            $table->unsignedBigInteger('input_values');
             $table->string('deskripsi')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
