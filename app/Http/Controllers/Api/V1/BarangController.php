@@ -23,7 +23,7 @@ class BarangController extends Controller
 
     public function show(string $id)
     {
-        $barang = Barang::with('kategori', 'divisi', 'createdBy', 'updatedBy')
+        $barang = Barang::with(['kategori', 'divisi', 'createdBy', 'updatedBy', 'stock'])
                         ->findOrFail($id);
         return new BarangResource($barang);
     }

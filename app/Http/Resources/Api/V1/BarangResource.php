@@ -30,6 +30,15 @@ class BarangResource extends JsonResource
                 'short' => $this->divisi->short,
                 'status' => $this->divisi->status,
             ],
+            'stock' => $this->stock ? [
+                'id' => $this->id,
+                'barangId' => $this->barang_id,
+                'userId' => $this->user_id,
+                'stock' => $this->stock,
+                'keterangan' => $this->keterangan,
+                'productionDate' => $this->production_date,
+                'type' => $this->type
+            ] : null,
             'createdBy' => [
                 'id' => $this->createdBy->id,
                 'name' => $this->createdBy->name,

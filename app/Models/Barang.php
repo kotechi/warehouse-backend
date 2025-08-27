@@ -53,4 +53,8 @@ class Barang extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'barang_id', 'id');
+    }
 }
