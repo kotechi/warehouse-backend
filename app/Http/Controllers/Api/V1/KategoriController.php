@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Barang;
+use App\Http\Resources\Api\V1\BarangResource;
 use App\Models\Kategori;
 class KategoriController extends Controller
 {
@@ -42,7 +44,8 @@ class KategoriController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $barangs = Barang::with(['kategori', 'divisi', 'createdBy', 'updatedBy'])->where('kategori_id', $id)->get();
+        return BarangResource::collection($barangs);
     }
 
     /**

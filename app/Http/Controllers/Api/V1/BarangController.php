@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\AuditLog;
 use App\Models\Kategori;
+use App\Models\Stock;
 use App\Http\Resources\Api\V1\BarangResource;
 use App\Events\BarangUpdated;
 use Illuminate\Support\Facades\Config;
@@ -133,8 +134,22 @@ class BarangController extends Controller
         $request->validate([
             'stock' => 'required|integer|min:1',
             'type' => 'required|string',
-            'deskripsi' => 'required|string',
-            'user_id' => 'required|integer'
+            'keterangan' => 'required|string',
+            'user_id' => 'required|integer',
+            'production_date' => 'date|nullable'
+        ]);
+
+        if (empty($request['production_date'])) {
+            $request['production_date'] = now()->toDateString();
+        }
+
+        Stock::create([
+            'barang_id'=> $id,
+            'user_id'=> $request->user_id,
+            'stock'=> $request->stock,
+            'keterangan'=> $request->keterangan,
+            'production_date'=> $request->production_date,
+            'type'=> $request->type
         ]);
 
         $barang = Barang::findOrFail($id);
@@ -142,14 +157,11 @@ class BarangController extends Controller
             'user_id' => $request->user_id,
             'type' => $request->type,
             'barang_id' => $id,
-            'deskripsi' => $request->deskripsi,
+            'deskripsi' => $request->ketarangan,
             'old_values' => $barang->stock_sekarang,
-            'new_values' => $barang->stock_sekarang += $request->stock,
+            'new_values' => $barang->stock_sekarang + $request->stock,
             'input_values' => $request->stock
         ]);
-        $barang->stock_sekarang += $request->stock;
-        $barang->updated_by = auth()->id(); // Track who updated the stock
-        $barang->save();
         
         return response()->json([
             'message' => 'Stock updated successfully',
