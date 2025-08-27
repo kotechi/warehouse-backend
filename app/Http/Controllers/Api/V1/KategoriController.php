@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Http\Resources\Api\V1\BarangResource;
+use App\Http\Resources\Api\V1\KategoriResource;
 use App\Models\Kategori;
 class KategoriController extends Controller
 {
@@ -15,7 +16,7 @@ class KategoriController extends Controller
     public function index()
     {
         $kategoris = Kategori::all();
-        return response()->json($kategoris);
+        return KategoriResource::collection($kategoris);
     }
 
     /**
