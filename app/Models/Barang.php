@@ -13,7 +13,6 @@ class Barang extends Model
         'kategori_id',
         'status',
         'main_produk',
-        'stock_awal',
         'stock_sekarang',
         'kode_qr',
         'line_divisi',
@@ -29,7 +28,6 @@ class Barang extends Model
     protected $casts = [
         'kategori_id' => 'integer',
         'main_produk' => 'integer',
-        'stock_awal' => 'integer',
         'stock_sekarang' => 'integer',
         'created_by' => 'integer',
         'updated_by' => 'integer',

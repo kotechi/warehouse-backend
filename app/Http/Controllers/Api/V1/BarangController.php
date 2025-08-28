@@ -36,8 +36,7 @@ class BarangController extends Controller
             'kodegrp' => 'required|string|max:255',
             'kategori_id' => 'required|integer', // Added exists validation
             'status' => 'required|string|max:255',
-            'main_produk' => 'nullable|integer', // Added exists validation
-            'stock' => 'required|integer|min:0',
+            'main_produk' => 'nullable|integer', 
             'line_divisi' => 'required|max:255',
             'production_date' => 'required', // Changed to date validation
             'created_by' => 'required|integer', // Added exists validation
@@ -59,8 +58,7 @@ class BarangController extends Controller
                 'kategori_id' => $request->kategori_id,
                 'status' => $request->status,
                 'main_produk' => $request->main_produk,
-                'stock_awal' => $request->stock,
-                'stock_sekarang' => $request->stock,
+                'stock_sekarang' => 0,
                 'kode_qr' => Config::get('services.frontend_url'). '/qr/' . $newid,
                 'line_divisi' => $request->line_divisi,
                 'production_date' => $request->production_date,
@@ -129,12 +127,13 @@ class BarangController extends Controller
         ]);
     }
 
+
     public function stockIn(Request $request, string $id)
     {
         $request->validate([
             'stock' => 'required|integer|min:1',
             'type' => 'required|string',
-            'keterangan' => 'required|string',
+            'keterangan' => 'required|string', 
             'user_id' => 'required|integer',
             'production_date' => 'date|nullable'
         ]);
@@ -143,23 +142,31 @@ class BarangController extends Controller
             $request['production_date'] = now()->toDateString();
         }
 
+        $barang = Barang::findOrFail($id);
+        $oldStock = $barang->stock_sekarang;
+
+        // Create stock record
         Stock::create([
             'barang_id'=> $id,
             'user_id'=> $request->user_id,
-            'stock'=> $request->stock,
+            'stock' => $request->stock, // Tambahkan ini
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
             'type'=> $request->type
         ]);
 
-        $barang = Barang::findOrFail($id);
+        // Update stock (tambah stock)
+        $barang->stock_sekarang += $request->stock;
+        $barang->save();
+
+        // Create audit log dengan nilai yang benar
         $auditlog = AuditLog::create([
             'user_id' => $request->user_id,
             'type' => $request->type,
             'barang_id' => $id,
-            'deskripsi' => $request->ketarangan,
-            'old_values' => $barang->stock_sekarang,
-            'new_values' => $barang->stock_sekarang + $request->stock,
+            'deskripsi' => $request->keterangan,
+            'old_values' => $oldStock,
+            'new_values' => $barang->stock_sekarang,
             'input_values' => $request->stock
         ]);
         
@@ -174,23 +181,31 @@ class BarangController extends Controller
         $request->validate([
             'stock' => 'required|integer|min:1',
             'type' => 'required|string',
-            'deskripsi' => 'required|string',
-            'user_id' => 'required|integer'
+            'keterangan' => 'required|string', 
+            'user_id' => 'required|integer',
+            'production_date' => 'date|nullable'
         ]);
 
-        $barang = Barang::findOrFail($id);
-        
-        if ($barang->stock_sekarang < $request->stock) {
-            return response()->json(['message' => 'Insufficient stock'], 400);
+        if (empty($request['production_date'])) {
+            $request['production_date'] = now()->toDateString();
         }
 
-        // Store old stock value before updating
+        $barang = Barang::findOrFail($id);
         $oldStock = $barang->stock_sekarang;
-        
         // Update stock once
         $barang->stock_sekarang -= $request->stock;
-        $barang->updated_by = auth()->id();
         $barang->save();
+
+        // Create stock record
+        Stock::create([
+            'barang_id'=> $id,
+            'user_id'=> $request->user_id,
+            'stock' => $request->stock, // Tambahkan ini
+            'keterangan'=> $request->keterangan,
+            'production_date'=> $request->production_date,
+            'type'=> $request->type
+        ]);
+        
         
         // Create audit log with correct values
         $auditlog = AuditLog::create([

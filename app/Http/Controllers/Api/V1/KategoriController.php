@@ -46,6 +46,7 @@ class KategoriController extends Controller
     public function show(string $id)
     {
         $barangs = Barang::with(['kategori', 'divisi', 'createdBy', 'updatedBy', 'stock'])->where('kategori_id', $id)->get();
+
         return BarangResource::collection($barangs);
     }
 
