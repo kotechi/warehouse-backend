@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('barang_id');
-            $table->unsignedBigInteger('user_id');
-            $table->integer('stock');
-            $table->string('keterangan');
-            $table->date('production_date');
-            $table->enum('type', ['Stock In', 'Stock Out']);
+            $table->string("activitas");
+            $table->string("deskripsi");
+            $table->unsignedBigInteger("user_id");
             $table->timestamps();
-            $table->foreign('barang_id')->references('id')->on('barangs');   
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('activity_logs');
     }
 };

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\AuditLog;
+use App\Models\ActivityLog;
 use App\Models\Kategori;
 use App\Models\Stock;
 use App\Http\Resources\Api\V1\BarangResource;
@@ -68,6 +69,11 @@ class BarangController extends Controller
                 'updated_by' => null,
                 'deleted_at' => null,
             ]);
+            $activity_log = ActivityLog::create([
+                'activitas' => 'Nambah Data Barang',
+                'deskripsi' => `$request->created_by Telah Mengedit data barang: $request->produk`,
+                'user_id' => $request->created_by
+            ]);
 
             return response()->json([
                 'message' => 'Barang created successfully',
@@ -110,6 +116,11 @@ class BarangController extends Controller
             'status' => $request->status,
             'production_date' => $request->production_date,
             'updated_by' => $request->user_id,  
+        ]);
+        $activity_log = ActivityLog::create([
+            'activitas' => 'Edit Data Barang',
+            'deskripsi' => `$request->created_by Telah Mengedit data barang: $request->produk`,
+            'user_id' => $request->created_by
         ]);
 
         
