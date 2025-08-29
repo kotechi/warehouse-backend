@@ -23,6 +23,7 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
     Route::apiResource('divisi', DivisiController::class)->middleware('auth:sanctum');
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
+    Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
     Route::apiResource('user', UserController::class)->middleware('auth:sanctum');
     
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
