@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('kategori_id');
             $table->string('status');
             $table->integer('stock_sekarang');
+            $table->integer('stock_awal');
             $table->string('kode_qr')->unique();
             $table->integer('line_divisi')->default(1);
             $table->date('production_date');

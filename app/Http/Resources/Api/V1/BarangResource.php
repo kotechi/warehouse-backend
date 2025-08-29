@@ -30,6 +30,7 @@ class BarangResource extends JsonResource
                 'short' => $this->divisi->short,
                 'status' => $this->divisi->status,
             ],
+            'stockAwal' => $this->stock_awal,
             'totalStock' => $this->stock_sekarang,
             'daftarStock' => $this->stock->map(function($stockItem) {
                 return [

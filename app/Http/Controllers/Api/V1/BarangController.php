@@ -38,6 +38,7 @@ class BarangController extends Controller
             'status' => 'required|string|max:255',
             'main_produk' => 'nullable|integer', 
             'line_divisi' => 'required|max:255',
+            'stock' => 'required',
             'production_date' => 'required', // Changed to date validation
             'created_by' => 'required|integer', // Added exists validation
         ]);
@@ -58,7 +59,8 @@ class BarangController extends Controller
                 'kategori_id' => $request->kategori_id,
                 'status' => $request->status,
                 'main_produk' => $request->main_produk,
-                'stock_sekarang' => 0,
+                'stock_sekarang' => $request->stock,
+                'stock_awal' => $request->stock,
                 'kode_qr' => Config::get('services.frontend_url'). '/qr/' . $newid,
                 'line_divisi' => $request->line_divisi,
                 'production_date' => $request->production_date,
@@ -89,6 +91,7 @@ class BarangController extends Controller
             'kategori_id' => 'required|integer',
             'status' => 'required|string|max:255',
             'production_date' => 'required',
+            'stock' => 'required',
             'user_id' => 'required|integer',
         ]);
      
