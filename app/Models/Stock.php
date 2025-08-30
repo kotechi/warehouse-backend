@@ -16,4 +16,8 @@ class Stock extends Model
         'production_date',
         'type'
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

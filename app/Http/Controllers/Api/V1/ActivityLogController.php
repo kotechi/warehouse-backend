@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ActivityLog;
+use App\Http\Resources\Api\V1\ActivityLogResource;
 
 class ActivityLogController extends Controller
 {
@@ -13,11 +14,8 @@ class ActivityLogController extends Controller
      */
     public function index()
     {
-        $activity_log = ActivityLog::all();
-        return response()->json([
-            'message' => 'berhasil ambil data activity log',
-            'data' => $activity_log 
-        ]);
+        $activity_log = ActivityLog::with('user')->get();
+        return ActivityLogResource::collection($activity_log);
     }
 
     /**
@@ -41,7 +39,8 @@ class ActivityLogController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $activity_log = ActivityLog::with('user')->findOrFail($id);
+        return ActivityLogResource::collection($activity_log);
     }
 
     /**

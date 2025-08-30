@@ -11,6 +11,7 @@ use App\Models\Kategori;
 use App\Models\User;
 use App\Models\Stock;
 use App\Http\Resources\Api\V1\BarangResource;
+use App\Http\Resources\Api\V1\StockResource;
 use App\Events\BarangUpdated;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -245,11 +246,11 @@ class BarangController extends Controller
 
     public function stockDetail(string $id)
     {
-        $stock = Stock::findOrFail($id);
+        $stock = Stock::with('user')->findOrFail($id);
 
         return response()->json([
             "message" => "berhasil ambil data",
-            "data" => $stock
+            "data" => new StockResource($stock)
         ]);
     }
 
