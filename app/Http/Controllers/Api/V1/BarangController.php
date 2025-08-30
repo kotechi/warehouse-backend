@@ -71,7 +71,7 @@ class BarangController extends Controller
             ]);
             $activity_log = ActivityLog::create([
                 'activitas' => 'Nambah Data Barang',
-                'deskripsi' => `$request->created_by Telah Mengedit data barang: $request->produk`,
+                'deskripsi' => $request->created_by . ' Telah Mengedit data barang: ' . $request->produk,
                 'user_id' => $request->created_by
             ]);
 
