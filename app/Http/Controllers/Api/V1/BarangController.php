@@ -8,6 +8,7 @@ use App\Models\Barang;
 use App\Models\AuditLog;
 use App\Models\ActivityLog;
 use App\Models\Kategori;
+use App\Models\User;
 use App\Models\Stock;
 use App\Http\Resources\Api\V1\BarangResource;
 use App\Events\BarangUpdated;
@@ -69,9 +70,10 @@ class BarangController extends Controller
                 'updated_by' => null,
                 'deleted_at' => null,
             ]);
+            $createdByUser = User::find($request->created_by);
             $activity_log = ActivityLog::create([
                 'activitas' => 'Nambah Data Barang',
-                'deskripsi' => $request->created_by . ' Telah Menambah data barang: ' . $request->produk,
+                'deskripsi' =>  $createdByUser->username . ' Telah Menambah data barang: ' . $request->produk,
                 'user_id' => $request->created_by
             ]);
 
@@ -117,9 +119,10 @@ class BarangController extends Controller
             'production_date' => $request->production_date,
             'updated_by' => $request->user_id,  
         ]);
+        $createdByUser = User::find($request->created_by);
         $activity_log = ActivityLog::create([
             'activitas' => 'Edit Data Barang',
-            'deskripsi' => $request->created_by .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
+            'deskripsi' => $createdByUser .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
             'user_id' => $request->created_by
         ]);
 
