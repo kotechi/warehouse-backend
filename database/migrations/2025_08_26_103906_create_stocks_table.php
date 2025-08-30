@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->integer('stock');
             $table->string('keterangan');
+            $table->string('kode_qr');
             $table->date('production_date');
             $table->enum('type', ['Stock In', 'Stock Out']);
             $table->timestamps();

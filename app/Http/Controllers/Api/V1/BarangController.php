@@ -71,7 +71,7 @@ class BarangController extends Controller
             ]);
             $activity_log = ActivityLog::create([
                 'activitas' => 'Nambah Data Barang',
-                'deskripsi' => $request->created_by . ' Telah Mengedit data barang: ' . $request->produk,
+                'deskripsi' => $request->created_by . ' Telah Menambah data barang: ' . $request->produk,
                 'user_id' => $request->created_by
             ]);
 
@@ -119,7 +119,7 @@ class BarangController extends Controller
         ]);
         $activity_log = ActivityLog::create([
             'activitas' => 'Edit Data Barang',
-            'deskripsi' => `$request->created_by Telah Mengedit data barang: $request->produk`,
+            'deskripsi' => $request->created_by .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
             'user_id' => $request->created_by
         ]);
 
@@ -166,7 +166,8 @@ class BarangController extends Controller
             'stock' => $request->stock, // Tambahkan ini
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
-            'type'=> $request->type
+            'type'=> $request->type,
+            'kode_qr'=> "http//:localhost:3000/qr/stock/". $id
         ]);
 
         // Update stock (tambah stock)
@@ -217,7 +218,8 @@ class BarangController extends Controller
             'stock' => $request->stock, // Tambahkan ini
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
-            'type'=> $request->type
+            'type'=> $request->type,
+            'kode_qr'=> "http//:localhost:3000/qr/stock/". $id
         ]);
         
         
@@ -226,7 +228,7 @@ class BarangController extends Controller
             'user_id' => $request->user_id,
             'type' => $request->type,
             'barang_id' => $id,
-            'deskripsi' => $request->deskripsi,
+            'deskripsi' => $request->keterangan ,
             'old_values' => $oldStock,
             'new_values' => $barang->stock_sekarang,
             'input_values' => $request->stock
@@ -237,4 +239,15 @@ class BarangController extends Controller
             'data' => new BarangResource($barang),
         ]);
     }
+
+    public function stockDetail(string $id)
+    {
+        $stock = Stock::findOrFail($id);
+
+        return response()->json([
+            "message" => "berhasil ambil data",
+            "data" => $stock
+        ]);
+    }
+
 }

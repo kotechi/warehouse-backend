@@ -10,6 +10,7 @@ class Stock extends Model
     protected $fillable = [
         'barang_id',
         'user_id',
+        'kode_qr',
         'stock',
         'keterangan',
         'production_date',

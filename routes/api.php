@@ -16,8 +16,9 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::post('register', [AuthController::class, 'register']);
 
     Route::apiResource('barang', BarangController::class)->middleware('auth:sanctum');
-    Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn']);
-    Route::post('barang/{id}/stock-out', [BarangController::class, 'stockOut']);
+    Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn'])->middleware('auth:sanctum');
+    Route::post('barang/{id}/stock-out', [BarangController::class, 'stockOut'])->middleware('auth:sanctum');
+    Route::get('barang/{id}/stock', [BarangController::class, 'stockDetail']);
 
     Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
