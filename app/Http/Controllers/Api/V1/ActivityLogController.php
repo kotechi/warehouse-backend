@@ -64,7 +64,7 @@ class ActivityLogController extends Controller
      */
     public function destroy(string $id)
     {
-        $activity_log = ActivityLog::findOrFil($id);
+        $activity_log = ActivityLog::findOrFail($id);
         $activity_log->delete();
     }
 }
