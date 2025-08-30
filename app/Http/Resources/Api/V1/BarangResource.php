@@ -38,6 +38,7 @@ class BarangResource extends JsonResource
                     'barangId'       => $stockItem->barang_id,
                     'userId'         => $stockItem->user_id,
                     'stock'          => $stockItem->stock,
+                    'kodeQr'          => $stockItem->kode_qr,
                     'keterangan'     => $stockItem->keterangan,
                     'productionDate' => $stockItem->production_date,
                     'type'           => $stockItem->type,
