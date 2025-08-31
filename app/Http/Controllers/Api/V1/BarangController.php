@@ -100,7 +100,6 @@ class BarangController extends Controller
             'kategori_id' => 'required|integer',
             'status' => 'required|string|max:255',
             'production_date' => 'required',
-            'stock' => 'required',
             'user_id' => 'required|integer',
         ]);
      
