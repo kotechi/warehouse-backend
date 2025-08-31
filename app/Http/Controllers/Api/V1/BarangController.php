@@ -74,7 +74,7 @@ class BarangController extends Controller
             $createdByUser = User::find($request->created_by);
             $activity_log = ActivityLog::create([
                 'activitas' => 'Nambah Data Barang',
-                'deskripsi' =>  $createdByUser->username . ' Telah Menambah data barang: ' . $request->produk,
+                'deskripsi' =>  $createdByUser->name . ' Telah Menambah data barang: ' . $request->produk,
                 'user_id' => $request->created_by
             ]);
 
@@ -122,7 +122,7 @@ class BarangController extends Controller
         $createdByUser = User::find($request->created_by);
         $activity_log = ActivityLog::create([
             'activitas' => 'Edit Data Barang',
-            'deskripsi' => $createdByUser->username .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
+            'deskripsi' => $createdByUser->name .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
             'user_id' => $request->created_by
         ]);
 
