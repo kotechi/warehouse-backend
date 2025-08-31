@@ -71,7 +71,7 @@ class BarangController extends Controller
                 'updated_by' => null,
                 'deleted_at' => null,
             ]);
-            $createdByUser = User::find($request->created_by);
+            $createdByUser = User::findOrFail($request->created_by);
             $activity_log = ActivityLog::create([
                 'activitas' => 'Nambah Data Barang',
                 'deskripsi' =>  $createdByUser->name . ' Telah Menambah data barang: ' . $request->produk,
@@ -119,7 +119,7 @@ class BarangController extends Controller
             'production_date' => $request->production_date,
             'updated_by' => $request->user_id,  
         ]);
-        $createdByUser = User::find($request->created_by);
+        $createdByUser = User::findOrFail($request->created_by);
         $activity_log = ActivityLog::create([
             'activitas' => 'Edit Data Barang',
             'deskripsi' => $createdByUser->name .' Telah Mengedit data barang: $request->produk: ' . $request->produk,
