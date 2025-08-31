@@ -246,7 +246,7 @@ class BarangController extends Controller
 
     public function stockDetail(string $id)
     {
-        $stock = Stock::with('user')->findOrFail($id);
+        $stock = Stock::with('user', 'barang')->findOrFail($id);
 
         return response()->json([
             "message" => "berhasil ambil data",

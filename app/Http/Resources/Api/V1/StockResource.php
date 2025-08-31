@@ -16,7 +16,19 @@ class StockResource extends JsonResource
     {
         return [
             'id'=> $this->id,
-            'barangId'=> $this->barang_id,
+            'barang'=> [
+                'id' => $this->barang->id,
+                'kodeGrp' => $this->barang->kodegrp,
+                'kategoriId' => $this->barang->kategori_id,
+                'status' => $this->barang->status,
+                'stockAwal' => $this->barang->stock_awal,
+                'stockSekarang' => $this->barang->stock_sekarang,
+                'kodeQr' => $this->barang->kode_qr,
+                'lineDivisi' => $this->barang->line_divisi,
+                'productionDate' => $this->barang->production_date,
+                'createdBy' => $this->barang->created_by,
+                'mainProduk' => $this->barang->main_produk,
+            ],
             'stock'=> $this->stock,
             'keterangan'=> $this->keterangan,
             'kodeQr'=> $this->kode_qr,
