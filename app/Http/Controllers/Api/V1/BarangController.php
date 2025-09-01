@@ -170,7 +170,7 @@ class BarangController extends Controller
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
             'type'=> $request->type,
-            'kode_qr'=> "http//:localhost:3000/qr/stock/". $id
+            'kode_qr'=> Config::get('services.frontend_url'). '/qr/stock/' . $id
         ]);
 
         // Update stock (tambah stock)
@@ -222,7 +222,7 @@ class BarangController extends Controller
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
             'type'=> $request->type,
-            'kode_qr'=> "http//:localhost:3000/qr/stock/". $id
+            'kode_qr'=> Config::get('services.frontend_url'). '/qr/stock/' . $id
         ]);
         
         
