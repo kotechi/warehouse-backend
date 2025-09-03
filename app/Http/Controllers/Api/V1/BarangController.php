@@ -33,20 +33,18 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        // Use Validator facade instead of $request->validate()
         $validator = Validator::make($request->all(), [
             'produk' => 'required|string|max:255',
             'kodegrp' => 'required|string|max:255',
-            'kategori_id' => 'required|integer', // Added exists validation
+            'kategori_id' => 'required|integer',
             'status' => 'required|string|max:255',
             'main_produk' => 'nullable|integer', 
             'line_divisi' => 'required|max:255',
             'stock' => 'required',
-            'production_date' => 'required', // Changed to date validation
-            'created_by' => 'required|integer', // Added exists validation
+            'production_date' => 'required', 
+            'created_by' => 'required|integer', 
         ]);
 
-        // Fix the validation check
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation failed',
@@ -54,7 +52,7 @@ class BarangController extends Controller
             ], 422);
         }
 
-        $newid = Barang::max('id') + 1; // Get the next ID for the new Barang
+        $newid = Barang::max('id') + 1; 
         try {
             $barang = Barang::create([
                 'produk' => $request->produk,
@@ -81,7 +79,7 @@ class BarangController extends Controller
             return response()->json([
                 'message' => 'Barang created successfully',
                 'data' => $barang
-            ], 201); // Changed to 201 for created resource
+            ], 201); 
             
         } catch (\Exception $e) {
             return response()->json([
@@ -162,22 +160,19 @@ class BarangController extends Controller
         $barang = Barang::findOrFail($id);
         $oldStock = $barang->stock_sekarang;
 
-        // Create stock record
         Stock::create([
             'barang_id'=> $id,
             'user_id'=> $request->user_id,
-            'stock' => $request->stock, // Tambahkan ini
+            'stock' => $request->stock, 
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
             'type'=> $request->type,
             'kode_qr'=> Config::get('services.frontend_url'). '/qr/stock/' . $id
         ]);
 
-        // Update stock (tambah stock)
         $barang->stock_sekarang += $request->stock;
         $barang->save();
 
-        // Create audit log dengan nilai yang benar
         $auditlog = AuditLog::create([
             'user_id' => $request->user_id,
             'type' => $request->type,
@@ -210,15 +205,13 @@ class BarangController extends Controller
 
         $barang = Barang::findOrFail($id);
         $oldStock = $barang->stock_sekarang;
-        // Update stock once
         $barang->stock_sekarang -= $request->stock;
         $barang->save();
 
-        // Create stock record
         Stock::create([
             'barang_id'=> $id,
             'user_id'=> $request->user_id,
-            'stock' => $request->stock, // Tambahkan ini
+            'stock' => $request->stock, 
             'keterangan'=> $request->keterangan,
             'production_date'=> $request->production_date,
             'type'=> $request->type,
@@ -226,7 +219,7 @@ class BarangController extends Controller
         ]);
         
         
-        // Create audit log with correct values
+        
         $auditlog = AuditLog::create([
             'user_id' => $request->user_id,
             'type' => $request->type,

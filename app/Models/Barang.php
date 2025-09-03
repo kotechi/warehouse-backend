@@ -25,7 +25,6 @@ class Barang extends Model
 
         
 
-    // Cast attributes to proper types
     protected $casts = [
         'kategori_id' => 'integer',
         'main_produk' => 'integer',
