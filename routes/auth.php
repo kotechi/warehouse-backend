@@ -8,7 +8,7 @@ Route::middleware('guest')->group(function () {
     Route::any('/login', function () {
         return Response::json([
             'message' => 'Unauthorized',
-        ], 401);
+        ], 201);
     })->name('login');
 
     // Volt::route('register', 'auth.register')
