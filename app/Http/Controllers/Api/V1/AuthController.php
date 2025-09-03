@@ -27,7 +27,6 @@ class AuthController extends Controller
             ], 401);
         }
         
-        // Create new token (simpler version without expiration parameter for debugging)
         $token = $user->createToken('api_token');
 
         return response()->json([
@@ -44,7 +43,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:admingudang,superadmin', // Added your default roles
+            'role' => 'required|string|in:admingudang,superadmin',
             'jabatan_id' => 'nullable|integer',
             'divisi_id' => 'nullable|integer',
         ]);
@@ -91,10 +90,8 @@ class AuthController extends Controller
     {
         $user = $request->user();
         
-        // Delete current token
         $request->user()->currentAccessToken()->delete();
         
-        // Create new token
         $token = $user->createToken('api_token');
         
         return response()->json([

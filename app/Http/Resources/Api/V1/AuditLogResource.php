@@ -29,10 +29,10 @@ class AuditLogResource extends JsonResource
                 'jabatanId'  => $this->user->jabatan_id,
                 'jabatanName'=> $this->user->jabatan?->nama,
             ],
-            'barang' => [
+            'barang' => $this->barang ? [
                 'idBarang'   => $this->barang->id,
-                'namaBarang' => $this->barang->produk
-            ],
+                'namaBarang' => $this->barang->produk,
+            ] : null,
             'type' => $this->type,
         ];
     }

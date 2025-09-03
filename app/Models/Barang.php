@@ -31,7 +31,7 @@ class Barang extends Model
         'main_produk' => 'integer',
         'stock_sekarang' => 'integer',
         'stock_awal' => 'integer',
-    'created_by' => 'integer',
+        'created_by' => 'integer',
         'updated_by' => 'integer',
         'production_date' => 'date',
         'deleted_at' => 'datetime',
