@@ -246,4 +246,14 @@ class BarangController extends Controller
         ]);
     }
 
+    public function listStock()
+    {
+        $stocks = Stock::with('user', 'barang')->get();
+
+        return response()->json([
+            "message" => "berhasil ambil data",
+            "data" => StockResource::collection($stocks)
+        ]);
+    }
+
 }
