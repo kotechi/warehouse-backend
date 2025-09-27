@@ -12,9 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->api(prepend: [
-            \Fruitcake\Cors\HandleCors::class,
-        ]);
+        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
