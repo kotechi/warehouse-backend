@@ -15,12 +15,21 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
-    ))),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 
+        implode(',', array_filter([
+            parse_url(env('APP_FRONTEND_URL', 'http://localhost:3000'), PHP_URL_HOST),
+            parse_url(env('APP_FRONTEND_URL', 'http://localhost:3000'), PHP_URL_HOST) . ':' . parse_url(env('APP_FRONTEND_URL', 'http://localhost:3000'), PHP_URL_PORT),
+            parse_url(env('APP_URL', 'http://127.0.0.1:8000'), PHP_URL_HOST),
+            parse_url(env('APP_URL', 'http://127.0.0.1:8000'), PHP_URL_HOST) . ':' . parse_url(env('APP_URL', 'http://127.0.0.1:8000'), PHP_URL_PORT),
+            'localhost',
+            'localhost:3000',
+            '127.0.0.1',
+            '127.0.0.1:8000',
+            '::1',
+        ], function($domain) {
+            return !is_null($domain) && $domain !== '' && $domain !== ':';
+        }))
+    )),
 
     /*
     |--------------------------------------------------------------------------
