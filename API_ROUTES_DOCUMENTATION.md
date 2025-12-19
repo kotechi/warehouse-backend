@@ -4,8 +4,25 @@ Tambahkan routes berikut ke file `routes/api.php`:
 
 ```php
 use App\Http\Controllers\AsetController;
+use App\Http\Controllers\Api\V1\DropdownController;
 
 Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
+    
+    // Dropdown Routes for Aset CRUD
+    Route::prefix('dropdown')->group(function () {
+        Route::get('kategori-aset', [DropdownController::class, 'kategoriAset']);
+        Route::get('subkategori-aset', [DropdownController::class, 'subkategoriAset']);
+        Route::get('detail-kategori-aset', [DropdownController::class, 'detailKategoriAset']);
+        Route::get('entitas', [DropdownController::class, 'entitas']);
+        Route::get('satker', [DropdownController::class, 'satker']);
+        Route::get('unit-eselon-ii', [DropdownController::class, 'unitEselonIi']);
+        Route::get('penanggung-jawab-aset', [DropdownController::class, 'penanggungJawabAset']);
+        Route::get('mata-uang', [DropdownController::class, 'mataUang']);
+        Route::get('kondisi-fisik', [DropdownController::class, 'kondisiFisik']);
+        Route::get('status-aset', [DropdownController::class, 'statusAset']);
+        Route::get('metode-penyusutan', [DropdownController::class, 'metodePenyusutan']);
+        Route::get('satuan', [DropdownController::class, 'satuan']);
+    });
     
     // Asset Management Routes
     Route::prefix('aset')->group(function () {
@@ -32,6 +49,484 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
 ```
 
 ## Contoh Request/Response
+
+## DROPDOWN API ENDPOINTS
+
+Semua endpoint dropdown API menggunakan prefix `/api/v1/dropdown` dan memerlukan authentication token (Bearer Token).
+
+### Format Response Dropdown
+Semua endpoint dropdown mengembalikan response dengan format berikut:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Nama Item (Kode)"
+    }
+  ]
+}
+```
+
+### Query Parameters (Berlaku untuk semua endpoint dropdown)
+- `search`: String untuk mencari item (case-insensitive)
+- Parameter tambahan sesuai dengan relasi (dijelaskan di setiap endpoint)
+
+---
+
+### 1. Dropdown Kategori Aset
+**Endpoint:** `GET /api/v1/dropdown/kategori-aset`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode kategori
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/kategori-aset?search=tetap
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Aset Tetap (AT)"
+    },
+    {
+      "value": 2,
+      "label": "Aset Bergerak Tetap (ABT)"
+    }
+  ]
+}
+```
+
+---
+
+### 2. Dropdown Subkategori Aset
+**Endpoint:** `GET /api/v1/dropdown/subkategori-aset`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode subkategori
+- `kategori_aset_id`: Filter berdasarkan kategori aset (optional)
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/subkategori-aset?kategori_aset_id=1&search=peralatan
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Peralatan Kantor (PK)",
+      "kategori_aset_id": 1,
+      "kategori_nama": "Aset Tetap"
+    },
+    {
+      "value": 2,
+      "label": "Peralatan Komputer (PC)",
+      "kategori_aset_id": 1,
+      "kategori_nama": "Aset Tetap"
+    }
+  ]
+}
+```
+
+---
+
+### 3. Dropdown Detail Kategori Aset
+**Endpoint:** `GET /api/v1/dropdown/detail-kategori-aset`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode detail kategori
+- `subkategori_aset_id`: Filter berdasarkan subkategori aset (optional)
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/detail-kategori-aset?subkategori_aset_id=2&search=laptop
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Laptop (LT)",
+      "subkategori_aset_id": 2,
+      "subkategori_nama": "Peralatan Komputer"
+    },
+    {
+      "value": 2,
+      "label": "Desktop (DT)",
+      "subkategori_aset_id": 2,
+      "subkategori_nama": "Peralatan Komputer"
+    }
+  ]
+}
+```
+
+---
+
+### 4. Dropdown Entitas
+**Endpoint:** `GET /api/v1/dropdown/entitas`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode entitas
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/entitas?search=kementerian
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Kementerian Keuangan (KEMENKEU)"
+    },
+    {
+      "value": 2,
+      "label": "Kementerian Dalam Negeri (KEMENDAGRI)"
+    }
+  ]
+}
+```
+
+---
+
+### 5. Dropdown Satker
+**Endpoint:** `GET /api/v1/dropdown/satker`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode satker
+- `entitas_id`: Filter berdasarkan entitas (optional)
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/satker?entitas_id=1&search=jakarta
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Kantor Wilayah DKI Jakarta (KW-DKI)",
+      "entitas_id": 1,
+      "entitas_nama": "Kementerian Keuangan"
+    }
+  ]
+}
+```
+
+---
+
+### 6. Dropdown Unit Eselon II
+**Endpoint:** `GET /api/v1/dropdown/unit-eselon-ii`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama atau kode unit
+- `satker_id`: Filter berdasarkan satker (optional)
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/unit-eselon-ii?satker_id=1&search=keuangan
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Bagian Keuangan (BK)",
+      "satker_id": 1,
+      "satker_nama": "Kantor Wilayah DKI Jakarta"
+    }
+  ]
+}
+```
+
+---
+
+### 7. Dropdown Penanggung Jawab Aset
+**Endpoint:** `GET /api/v1/dropdown/penanggung-jawab-aset`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama PIC, NIP, atau jabatan
+- `unit_eselon_ii_id`: Filter berdasarkan unit eselon II (optional)
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/penanggung-jawab-aset?unit_eselon_ii_id=1&search=budi
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": 1,
+      "label": "Budi Santoso - Kepala Bagian (198501012010011001)",
+      "unit_eselon_ii_id": 1,
+      "unit_nama": "Bagian Keuangan"
+    }
+  ]
+}
+```
+
+---
+
+### 8. Dropdown Mata Uang
+**Endpoint:** `GET /api/v1/dropdown/mata-uang`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan kode atau nama mata uang
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/mata-uang?search=idr
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": "IDR",
+      "label": "IDR - Indonesian Rupiah"
+    },
+    {
+      "value": "USD",
+      "label": "USD - United States Dollar"
+    },
+    {
+      "value": "EUR",
+      "label": "EUR - Euro"
+    }
+  ]
+}
+```
+
+---
+
+### 9. Dropdown Kondisi Fisik
+**Endpoint:** `GET /api/v1/dropdown/kondisi-fisik`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama kondisi
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/kondisi-fisik
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": "Baik",
+      "label": "Baik"
+    },
+    {
+      "value": "Rusak Ringan",
+      "label": "Rusak Ringan"
+    },
+    {
+      "value": "Rusak Sedang",
+      "label": "Rusak Sedang"
+    },
+    {
+      "value": "Rusak Berat",
+      "label": "Rusak Berat"
+    }
+  ]
+}
+```
+
+---
+
+### 10. Dropdown Status Aset
+**Endpoint:** `GET /api/v1/dropdown/status-aset`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama status
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/status-aset
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": "Aktif",
+      "label": "Aktif"
+    },
+    {
+      "value": "Dalam Perbaikan",
+      "label": "Dalam Perbaikan"
+    },
+    {
+      "value": "Tidak Digunakan",
+      "label": "Tidak Digunakan"
+    },
+    {
+      "value": "Dihapuskan",
+      "label": "Dihapuskan"
+    },
+    {
+      "value": "Dipindahtangankan",
+      "label": "Dipindahtangankan"
+    }
+  ]
+}
+```
+
+---
+
+### 11. Dropdown Metode Penyusutan
+**Endpoint:** `GET /api/v1/dropdown/metode-penyusutan`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama metode
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/metode-penyusutan
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": "Garis Lurus",
+      "label": "Garis Lurus"
+    },
+    {
+      "value": "Saldo Menurun",
+      "label": "Saldo Menurun"
+    },
+    {
+      "value": "Tidak Disusutkan",
+      "label": "Tidak Disusutkan"
+    }
+  ]
+}
+```
+
+---
+
+### 12. Dropdown Satuan
+**Endpoint:** `GET /api/v1/dropdown/satuan`
+
+**Query Parameters:**
+- `search`: Cari berdasarkan nama satuan
+
+**Contoh Request:**
+```
+GET /api/v1/dropdown/satuan
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "value": "Unit",
+      "label": "Unit"
+    },
+    {
+      "value": "Set",
+      "label": "Set"
+    },
+    {
+      "value": "Buah",
+      "label": "Buah"
+    },
+    {
+      "value": "Lembar",
+      "label": "Lembar"
+    }
+  ]
+}
+```
+
+---
+
+## CONTOH PENGGUNAAN DROPDOWN DALAM FORM ASET
+
+### Contoh Integrasi dengan Frontend (React/Vue/Angular)
+
+```javascript
+// Contoh fetch dropdown dengan search
+const fetchKategoriAset = async (searchTerm = '') => {
+  const response = await fetch(
+    `/api/v1/dropdown/kategori-aset?search=${searchTerm}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    }
+  );
+  const result = await response.json();
+  return result.data; // [{value: 1, label: "..."}, ...]
+};
+
+// Contoh cascade dropdown (kategori -> subkategori -> detail)
+const handleKategoriChange = async (kategoriId) => {
+  const subkategoriData = await fetch(
+    `/api/v1/dropdown/subkategori-aset?kategori_aset_id=${kategoriId}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    }
+  );
+  // Update subkategori dropdown options
+};
+```
+
+---
+
+## ASSET CRUD API ENDPOINTS
 
 ### 1. List Assets (GET /api/v1/aset)
 **Query Parameters:**
