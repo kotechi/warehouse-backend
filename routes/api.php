@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BarangController;
 use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\DropdownController;
+use App\Http\Controllers\Api\V1\KategoriAsetController;
+use App\Http\Controllers\Api\V1\SubkategoriAsetController;
 use App\Http\Controllers\AsetController;
 
 
@@ -56,6 +58,8 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::get('stock', [BarangController::class, 'listStock']);
     Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
+    Route::apiResource('kategori-aset', KategoriAsetController::class)->middleware('auth:sanctum');
+    Route::apiResource('subkategori-aset', SubkategoriAsetController::class)->middleware('auth:sanctum');
     Route::apiResource('divisi', DivisiController::class)->middleware('auth:sanctum');
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
     Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
