@@ -94,9 +94,7 @@ class AsetController extends Controller
 
         DB::beginTransaction();
         try {
-            if (auth()->check()) {
-                $validated['created_by'] = auth()->id();
-            }
+            $validated['created_by'] = auth()->id();
             $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
             $aset = Aset::create($validated);
 
