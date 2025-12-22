@@ -90,11 +90,14 @@ class AsetController extends Controller
             'ruangan' => 'nullable|string|max:100',
             'kode_qr' => 'nullable|string|unique:asets,kode_qr',
             'tag_rfid' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id', 
         ]);
 
         DB::beginTransaction();
         try {
-            $validated['created_by'] = auth()->id();
+            // HAPUS BARIS INI - sudah dihandle dari frontend dan boot method
+            // $validated['created_by'] = auth()->id();
+            
             $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
             $aset = Aset::create($validated);
 
@@ -172,9 +175,11 @@ class AsetController extends Controller
             'penanggung_jawab_aset_id' => 'nullable|exists:penanggung_jawab_asets,id',
         ]);
 
-        if (auth()->check()) {
-            $validated['updated_by'] = auth()->id();
-        }
+        // HAPUS BARIS INI - sudah dihandle di boot method
+        // if (auth()->check()) {
+        //     $validated['updated_by'] = auth()->id();
+        // }
+        
         $aset->update($validated);
 
         return response()->json([
