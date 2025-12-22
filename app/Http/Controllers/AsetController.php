@@ -94,7 +94,9 @@ class AsetController extends Controller
 
         DB::beginTransaction();
         try {
-            $validated['created_by'] = auth()->id();
+            if (auth()->check()) {
+                $validated['created_by'] = auth()->id();
+            }
             $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
             $aset = Aset::create($validated);
 
@@ -172,7 +174,9 @@ class AsetController extends Controller
             'penanggung_jawab_aset_id' => 'nullable|exists:penanggung_jawab_asets,id',
         ]);
 
-        $validated['updated_by'] = auth()->id();
+        if (auth()->check()) {
+            $validated['updated_by'] = auth()->id();
+        }
         $aset->update($validated);
 
         return response()->json([
@@ -241,18 +245,23 @@ class AsetController extends Controller
         ]);
 
         $validated['aset_id'] = $aset->id;
-        $validated['created_by'] = auth()->id();
+        if (auth()->check()) {
+            $validated['created_by'] = auth()->id();
+        }
         $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
 
         $pemeliharaan = RiwayatPemeliharaan::create($validated);
 
         // Update kondisi aset jika status selesai
         if ($request->status == 'selesai' && $request->kondisi_sesudah) {
-            $aset->update([
+            $updateData = [
                 'kondisi_fisik' => $request->kondisi_sesudah,
-                'status' => 'aktif',
-                'updated_by' => auth()->id()
-            ]);
+                'status' => 'aktif'
+            ];
+            if (auth()->check()) {
+                $updateData['updated_by'] = auth()->id();
+            }
+            $aset->update($updateData);
         }
 
         return response()->json([
@@ -286,7 +295,9 @@ class AsetController extends Controller
         $validated['aset_id'] = $aset->id;
         $validated['nilai_buku_saat_ini'] = $aset->nilai_buku;
         $validated['status'] = 'draft';
-        $validated['created_by'] = auth()->id();
+        if (auth()->check()) {
+            $validated['created_by'] = auth()->id();
+        }
 
         $disposal = PenghapusanPemindahtangananAset::create($validated);
 
