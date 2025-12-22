@@ -220,13 +220,37 @@ class AsetController extends Controller
     }
 
     /**
+     * Get maintenance history for an asset
+     */
+    public function getMaintenance($id)
+    {
+        $aset = Aset::findOrFail($id);
+        
+        $maintenance = $aset->riwayatPemeliharaans()
+            ->orderBy('tanggal_pemeliharaan', 'desc')
+            ->get();
+
+        return response()->json([
+            'aset' => [
+                'id' => $aset->id,
+                'kode_barang' => $aset->kode_barang,
+                'nama_aset' => $aset->nama_aset,
+                'kondisi_fisik' => $aset->kondisi_fisik,
+            ],
+            'maintenance' => $maintenance,
+            'total' => $maintenance->count(),
+            'total_biaya' => $maintenance->sum('biaya')
+        ]);
+    }
+
+    /**
      * Add maintenance record
      */
     public function addPemeliharaan(Request $request, $id)
     {
         $aset = Aset::findOrFail($id);
 
-        $validated = $request->validate([
+        $validated = $request->validate([   
             'tanggal_pemeliharaan' => 'required|date',
             'jenis_pemeliharaan' => 'required|in:preventif,korektif,perbaikan,service,kalibrasi,upgrade,lainnya',
             'deskripsi_pemeliharaan' => 'required|string',

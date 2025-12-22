@@ -42,6 +42,7 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         Route::get('/{id}/penyusutan', [AsetController::class, 'getPenyusutan']); // Get depreciation history
         
         // Pemeliharaan
+        Route::get('/{id}/maintenance', [AsetController::class, 'getMaintenance']); // Get maintenance history
         Route::post('/{id}/pemeliharaan', [AsetController::class, 'addPemeliharaan']); // Add maintenance record
         
         // Penghapusan/Pemindahtanganan
