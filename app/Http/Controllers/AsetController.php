@@ -73,7 +73,7 @@ class AsetController extends Controller
             'satuan' => 'required|string|max:50',
             'tanggal_perolehan' => 'nullable|date',
             'nilai_perolehan' => 'required|numeric|min:0',
-            'mata_uang' => 'string|default:IDR',
+            'mata_uang' => 'nullable|string',
             'sumber_perolehan' => 'required|in:pembelian,hibah,tukar_menukar,penyertaan_modal,hasil_pembangunan,lainnya',
             'keterangan_sumber_perolehan' => 'nullable|string',
             'entitas_id' => 'nullable|exists:entitas,id',
@@ -95,6 +95,7 @@ class AsetController extends Controller
         DB::beginTransaction();
         try {
             $validated['created_by'] = auth()->id();
+            $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
             $aset = Aset::create($validated);
 
             // Auto-generate penyusutan jika aset tetap dan memiliki umur manfaat
@@ -230,7 +231,7 @@ class AsetController extends Controller
             'kondisi_sebelum' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'kondisi_sesudah' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'biaya' => 'required|numeric|min:0',
-            'mata_uang' => 'string|default:IDR',
+            'mata_uang' => 'nullable|string',
             'vendor' => 'nullable|string|max:200',
             'kontak_vendor' => 'nullable|string|max:100',
             'lokasi_vendor' => 'nullable|string|max:255',
@@ -241,6 +242,7 @@ class AsetController extends Controller
 
         $validated['aset_id'] = $aset->id;
         $validated['created_by'] = auth()->id();
+        $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
 
         $pemeliharaan = RiwayatPemeliharaan::create($validated);
 
