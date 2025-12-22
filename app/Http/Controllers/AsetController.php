@@ -269,10 +269,10 @@ class AsetController extends Controller
             'status' => 'required|in:dijadwalkan,sedang_dikerjakan,selesai,dibatalkan',
             'tanggal_selesai' => 'nullable|date',
             'catatan' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id',
         ]);
         
         $validated['aset_id'] = $aset->id;
-        $validated['created_by'] = $request->user()->id;
         $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
 
         $pemeliharaan = RiwayatPemeliharaan::create($validated);
