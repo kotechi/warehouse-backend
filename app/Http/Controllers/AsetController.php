@@ -282,7 +282,7 @@ class AsetController extends Controller
             $updateData = [
                 'kondisi_fisik' => $request->kondisi_sesudah,
                 'status' => 'aktif',
-                'updated_by' => $request->user()->id
+                'updated_by' => $request->created_by,
             ];
             $aset->update($updateData);
         }
