@@ -270,11 +270,9 @@ class AsetController extends Controller
             'tanggal_selesai' => 'nullable|date',
             'catatan' => 'nullable|string',
         ]);
-
+        
         $validated['aset_id'] = $aset->id;
-        if (auth()->check()) {
-            $validated['created_by'] = auth()->id();
-        }
+        $validated['created_by'] = $request->user()->id;
         $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
 
         $pemeliharaan = RiwayatPemeliharaan::create($validated);
@@ -283,11 +281,9 @@ class AsetController extends Controller
         if ($request->status == 'selesai' && $request->kondisi_sesudah) {
             $updateData = [
                 'kondisi_fisik' => $request->kondisi_sesudah,
-                'status' => 'aktif'
+                'status' => 'aktif',
+                'updated_by' => $request->user()->id
             ];
-            if (auth()->check()) {
-                $updateData['updated_by'] = auth()->id();
-            }
             $aset->update($updateData);
         }
 
@@ -322,9 +318,7 @@ class AsetController extends Controller
         $validated['aset_id'] = $aset->id;
         $validated['nilai_buku_saat_ini'] = $aset->nilai_buku;
         $validated['status'] = 'draft';
-        if (auth()->check()) {
-            $validated['created_by'] = auth()->id();
-        }
+        $validated['created_by'] = $request->user()->id;
 
         $disposal = PenghapusanPemindahtangananAset::create($validated);
 
