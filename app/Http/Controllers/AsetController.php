@@ -73,7 +73,7 @@ class AsetController extends Controller
             'satuan' => 'required|string|max:50',
             'tanggal_perolehan' => 'nullable|date',
             'nilai_perolehan' => 'required|numeric|min:0',
-            'mata_uang' => 'string|default:IDR',
+            'mata_uang' => 'nullable|string',
             'sumber_perolehan' => 'required|in:pembelian,hibah,tukar_menukar,penyertaan_modal,hasil_pembangunan,lainnya',
             'keterangan_sumber_perolehan' => 'nullable|string',
             'entitas_id' => 'nullable|exists:entitas,id',
@@ -90,11 +90,15 @@ class AsetController extends Controller
             'ruangan' => 'nullable|string|max:100',
             'kode_qr' => 'nullable|string|unique:asets,kode_qr',
             'tag_rfid' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id', 
         ]);
 
         DB::beginTransaction();
         try {
-            $validated['created_by'] = auth()->id();
+            // HAPUS BARIS INI - sudah dihandle dari frontend dan boot method
+            // $validated['created_by'] = auth()->id();
+            
+            $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
             $aset = Aset::create($validated);
 
             // Auto-generate penyusutan jika aset tetap dan memiliki umur manfaat
@@ -171,7 +175,11 @@ class AsetController extends Controller
             'penanggung_jawab_aset_id' => 'nullable|exists:penanggung_jawab_asets,id',
         ]);
 
-        $validated['updated_by'] = auth()->id();
+        // HAPUS BARIS INI - sudah dihandle di boot method
+        // if (auth()->check()) {
+        //     $validated['updated_by'] = auth()->id();
+        // }
+        
         $aset->update($validated);
 
         return response()->json([
@@ -217,40 +225,66 @@ class AsetController extends Controller
     }
 
     /**
+     * Get maintenance history for an asset
+     */
+    public function getMaintenance($id)
+    {
+        $aset = Aset::findOrFail($id);
+        
+        $maintenance = $aset->riwayatPemeliharaans()
+            ->orderBy('tanggal_pemeliharaan', 'desc')
+            ->get();
+
+        return response()->json([
+            'aset' => [
+                'id' => $aset->id,
+                'kode_barang' => $aset->kode_barang,
+                'nama_aset' => $aset->nama_aset,
+                'kondisi_fisik' => $aset->kondisi_fisik,
+            ],
+            'maintenance' => $maintenance,
+            'total' => $maintenance->count(),
+            'total_biaya' => $maintenance->sum('biaya')
+        ]);
+    }
+
+    /**
      * Add maintenance record
      */
     public function addPemeliharaan(Request $request, $id)
     {
         $aset = Aset::findOrFail($id);
 
-        $validated = $request->validate([
+        $validated = $request->validate([   
             'tanggal_pemeliharaan' => 'required|date',
             'jenis_pemeliharaan' => 'required|in:preventif,korektif,perbaikan,service,kalibrasi,upgrade,lainnya',
             'deskripsi_pemeliharaan' => 'required|string',
             'kondisi_sebelum' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'kondisi_sesudah' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'biaya' => 'required|numeric|min:0',
-            'mata_uang' => 'string|default:IDR',
+            'mata_uang' => 'nullable|string',
             'vendor' => 'nullable|string|max:200',
             'kontak_vendor' => 'nullable|string|max:100',
             'lokasi_vendor' => 'nullable|string|max:255',
             'status' => 'required|in:dijadwalkan,sedang_dikerjakan,selesai,dibatalkan',
             'tanggal_selesai' => 'nullable|date',
             'catatan' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id',
         ]);
-
+        
         $validated['aset_id'] = $aset->id;
-        $validated['created_by'] = auth()->id();
+        $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
 
         $pemeliharaan = RiwayatPemeliharaan::create($validated);
 
         // Update kondisi aset jika status selesai
         if ($request->status == 'selesai' && $request->kondisi_sesudah) {
-            $aset->update([
+            $updateData = [
                 'kondisi_fisik' => $request->kondisi_sesudah,
                 'status' => 'aktif',
-                'updated_by' => auth()->id()
-            ]);
+                'updated_by' => $request->created_by,
+            ];
+            $aset->update($updateData);
         }
 
         return response()->json([
@@ -284,7 +318,7 @@ class AsetController extends Controller
         $validated['aset_id'] = $aset->id;
         $validated['nilai_buku_saat_ini'] = $aset->nilai_buku;
         $validated['status'] = 'draft';
-        $validated['created_by'] = auth()->id();
+        $validated['created_by'] = $request->user()->id;
 
         $disposal = PenghapusanPemindahtangananAset::create($validated);
 

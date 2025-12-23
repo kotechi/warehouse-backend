@@ -5,11 +5,30 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BarangController;
 use App\Http\Controllers\Api\V1\NotifikasiController;
+use App\Http\Controllers\Api\V1\DropdownController;
+use App\Http\Controllers\Api\V1\KategoriAsetController;
+use App\Http\Controllers\Api\V1\SubkategoriAsetController;
 use App\Http\Controllers\AsetController;
 
 
 Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], function () {
     Route::post('login', [AuthController::class, 'login']);
+
+    // Dropdown Routes for Aset CRUD
+    Route::prefix('dropdown')->middleware('auth:sanctum')->group(function () {
+        Route::get('kategori-aset', [DropdownController::class, 'kategoriAset']);
+        Route::get('subkategori-aset', [DropdownController::class, 'subkategoriAset']);
+        Route::get('detail-kategori-aset', [DropdownController::class, 'detailKategoriAset']);
+        Route::get('entitas', [DropdownController::class, 'entitas']);
+        Route::get('satker', [DropdownController::class, 'satker']);
+        Route::get('unit-eselon-ii', [DropdownController::class, 'unitEselonIi']);
+        Route::get('penanggung-jawab-aset', [DropdownController::class, 'penanggungJawabAset']);
+        Route::get('mata-uang', [DropdownController::class, 'mataUang']);
+        Route::get('kondisi-fisik', [DropdownController::class, 'kondisiFisik']);
+        Route::get('status-aset', [DropdownController::class, 'statusAset']);
+        Route::get('metode-penyusutan', [DropdownController::class, 'metodePenyusutan']);
+        Route::get('satuan', [DropdownController::class, 'satuan']);
+    });
 
     Route::prefix('aset')->group(function () {
         // CRUD Aset
@@ -23,6 +42,7 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         Route::get('/{id}/penyusutan', [AsetController::class, 'getPenyusutan']); // Get depreciation history
         
         // Pemeliharaan
+        Route::get('/{id}/maintenance', [AsetController::class, 'getMaintenance']); // Get maintenance history
         Route::post('/{id}/pemeliharaan', [AsetController::class, 'addPemeliharaan']); // Add maintenance record
         
         // Penghapusan/Pemindahtanganan
@@ -39,6 +59,8 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::get('stock', [BarangController::class, 'listStock']);
     Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
+    Route::apiResource('kategori-aset', KategoriAsetController::class)->middleware('auth:sanctum');
+    Route::apiResource('subkategori-aset', SubkategoriAsetController::class)->middleware('auth:sanctum');
     Route::apiResource('divisi', DivisiController::class)->middleware('auth:sanctum');
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
     Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
