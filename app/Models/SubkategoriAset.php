@@ -13,7 +13,6 @@ class SubkategoriAset extends Model
     
     protected $fillable = [
         'kategori_aset_id',
-        'kode_subkategori',
         'nama_subkategori',
         'deskripsi',
         'status',

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BarangController;
 use App\Http\Controllers\Api\V1\NotifikasiController;
+use App\Http\Controllers\Api\V1\KategoriAsetController;
+use App\Http\Controllers\Api\V1\SubkategoriAsetController;
 use App\Http\Controllers\AsetController;
 
 
@@ -28,8 +30,9 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         // Penghapusan/Pemindahtanganan
         Route::post('/{id}/disposal', [AsetController::class, 'initiateDisposal']); // Initiate disposal/transfer
         
-        // Statistics
+        // Statistics & Warnings
         Route::get('/statistics/summary', [AsetController::class, 'getStatistics']); // Get asset statistics
+        Route::get('/warnings/near-expiration', [AsetController::class, 'getAssetsNearExpiration']); // Get assets near expiration (48 hours)
     })->middleware('auth:sanctum');
     Route::apiResource('barang', BarangController::class)->middleware('auth:sanctum');
     Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn'])->middleware('auth:sanctum');
@@ -39,6 +42,8 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::get('stock', [BarangController::class, 'listStock']);
     Route::apiResource('auditlog', AuditLogController::class)->middleware('auth:sanctum');
     Route::apiResource('kategori', KategoriController::class)->middleware('auth:sanctum');
+    Route::apiResource('kategori-aset', KategoriAsetController::class)->middleware('auth:sanctum');
+    Route::apiResource('subkategori-aset', SubkategoriAsetController::class)->middleware('auth:sanctum');
     Route::apiResource('divisi', DivisiController::class)->middleware('auth:sanctum');
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
     Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
