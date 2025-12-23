@@ -37,7 +37,6 @@ class SubkategoriAsetController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'kategori_aset_id' => 'required|exists:kategori_asets,id',
-            'kode_subkategori' => 'required|string|max:255|unique:subkategori_asets,kode_subkategori',
             'nama_subkategori' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:aktif,tidak_aktif',
@@ -53,7 +52,6 @@ class SubkategoriAsetController extends Controller
         try {
             $subkategoriAset = SubkategoriAset::create([
                 'kategori_aset_id' => $request->kategori_aset_id,
-                'kode_subkategori' => $request->kode_subkategori,
                 'nama_subkategori' => $request->nama_subkategori,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
@@ -96,7 +94,6 @@ class SubkategoriAsetController extends Controller
 
         $validator = Validator::make($request->all(), [
             'kategori_aset_id' => 'required|exists:kategori_asets,id',
-            'kode_subkategori' => 'required|string|max:255|unique:subkategori_asets,kode_subkategori,' . $id,
             'nama_subkategori' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:aktif,tidak_aktif',
@@ -112,7 +109,6 @@ class SubkategoriAsetController extends Controller
         try {
             $subkategoriAset->update([
                 'kategori_aset_id' => $request->kategori_aset_id,
-                'kode_subkategori' => $request->kode_subkategori,
                 'nama_subkategori' => $request->nama_subkategori,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,

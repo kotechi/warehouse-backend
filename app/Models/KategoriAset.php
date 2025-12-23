@@ -12,7 +12,6 @@ class KategoriAset extends Model
     protected $table = 'kategori_asets';
     
     protected $fillable = [
-        'kode_kategori',
         'nama_kategori',
         'deskripsi',
         'status',

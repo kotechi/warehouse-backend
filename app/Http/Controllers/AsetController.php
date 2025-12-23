@@ -63,7 +63,7 @@ class AsetController extends Controller
     {
         $validated = $request->validate([
             'kode_barang' => 'required|string|unique:asets,kode_barang',
-            'nup' => 'nullable|string',
+            'nup' => 'nullable|string|max:6',
             'kategori_aset_id' => 'required|exists:kategori_asets,id',
             'subkategori_aset_id' => 'nullable|exists:subkategori_asets,id',
             'detail_kategori_aset_id' => 'nullable|exists:detail_kategori_asets,id',
@@ -75,7 +75,6 @@ class AsetController extends Controller
             'nilai_perolehan' => 'required|numeric|min:0',
             'mata_uang' => 'nullable|string',
             'sumber_perolehan' => 'required|in:pembelian,hibah,tukar_menukar,penyertaan_modal,hasil_pembangunan,lainnya',
-            'keterangan_sumber_perolehan' => 'nullable|string',
             'entitas_id' => 'nullable|exists:entitas,id',
             'satker_id' => 'nullable|exists:satkers,id',
             'unit_eselon_ii_id' => 'nullable|exists:unit_eselon_iis,id',
@@ -86,6 +85,7 @@ class AsetController extends Controller
             'umur_manfaat_bulan' => 'nullable|integer|min:1',
             'metode_penyusutan' => 'nullable|in:garis_lurus,saldo_menurun,tidak_disusutkan',
             'nilai_residu' => 'nullable|numeric|min:0',
+            'akumulasi_penyusutan' => 'nullable|numeric|min:0',
             'lokasi_fisik' => 'nullable|string|max:255',
             'ruangan' => 'nullable|string|max:100',
             'kode_qr' => 'nullable|string|unique:asets,kode_qr',
@@ -162,7 +162,7 @@ class AsetController extends Controller
 
         $validated = $request->validate([
             'kode_barang' => 'required|string|unique:asets,kode_barang,' . $id,
-            'nup' => 'nullable|string',
+            'nup' => 'nullable|string|max:6',
             'kategori_aset_id' => 'required|exists:kategori_asets,id',
             'subkategori_aset_id' => 'nullable|exists:subkategori_asets,id',
             'detail_kategori_aset_id' => 'nullable|exists:detail_kategori_asets,id',
@@ -302,13 +302,13 @@ class AsetController extends Controller
 
         $validated = $request->validate([
             'jenis_tindakan' => 'required|in:jual,hibah,pindah_tangan,tukar_menukar,penyertaan_modal,pemusnahan,penghapusan',
-            'tanggal_pengajuan' => 'required|date',
+            'tanggal' => 'required|date',
             'alasan' => 'required|string',
             'kondisi_aset' => 'required|in:baik,rusak_ringan,rusak_berat',
             'nilai_transaksi' => 'nullable|numeric|min:0',
-            'pihak_penerima' => 'nullable|string|max:200',
-            'alamat_penerima' => 'nullable|string',
-            'kontak_penerima' => 'nullable|string|max:100',
+            'dasar_persetujuan' => 'nullable|string',
+            'tanggal_pemindahan' => 'nullable|date',
+            'upload_bukti' => 'nullable|string',
             'entitas_tujuan_id' => 'nullable|exists:entitas,id',
             'satker_tujuan_id' => 'nullable|exists:satkers,id',
             'unit_eselon_ii_tujuan_id' => 'nullable|exists:unit_eselon_iis,id',
@@ -349,8 +349,29 @@ class AsetController extends Controller
             'perlu_pemeliharaan' => Aset::where('kondisi_fisik', 'rusak_ringan')
                 ->orWhere('kondisi_fisik', 'rusak_berat')
                 ->count(),
+            'near_expiration' => Aset::nearExpiration()->count(),
         ];
 
         return response()->json($stats);
+    }
+
+    /**
+     * Get assets near expiration (within 48 hours)
+     */
+    public function getAssetsNearExpiration()
+    {
+        $assets = Aset::nearExpiration()
+            ->with(['kategoriAset', 'subkategoriAset', 'detailKategoriAset'])
+            ->get()
+            ->map(function($asset) {
+                $asset->expiration_date = $asset->expiration_date;
+                $asset->hours_until_expiration = now()->diffInHours($asset->expiration_date, false);
+                return $asset;
+            });
+
+        return response()->json([
+            'message' => 'Assets near expiration retrieved successfully',
+            'data' => $assets
+        ]);
     }
 }

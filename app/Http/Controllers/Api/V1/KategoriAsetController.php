@@ -28,7 +28,6 @@ class KategoriAsetController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode_kategori' => 'required|string|max:255|unique:kategori_asets,kode_kategori',
             'nama_kategori' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:aktif,tidak_aktif',
@@ -43,7 +42,6 @@ class KategoriAsetController extends Controller
 
         try {
             $kategoriAset = KategoriAset::create([
-                'kode_kategori' => $request->kode_kategori,
                 'nama_kategori' => $request->nama_kategori,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
@@ -83,7 +81,6 @@ class KategoriAsetController extends Controller
         $kategoriAset = KategoriAset::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'kode_kategori' => 'required|string|max:255|unique:kategori_asets,kode_kategori,' . $id,
             'nama_kategori' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:aktif,tidak_aktif',
@@ -98,7 +95,6 @@ class KategoriAsetController extends Controller
 
         try {
             $kategoriAset->update([
-                'kode_kategori' => $request->kode_kategori,
                 'nama_kategori' => $request->nama_kategori,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,

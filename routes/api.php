@@ -48,8 +48,9 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         // Penghapusan/Pemindahtanganan
         Route::post('/{id}/disposal', [AsetController::class, 'initiateDisposal']); // Initiate disposal/transfer
         
-        // Statistics
+        // Statistics & Warnings
         Route::get('/statistics/summary', [AsetController::class, 'getStatistics']); // Get asset statistics
+        Route::get('/warnings/near-expiration', [AsetController::class, 'getAssetsNearExpiration']); // Get assets near expiration
     })->middleware('auth:sanctum');
     Route::apiResource('barang', BarangController::class)->middleware('auth:sanctum');
     Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn'])->middleware('auth:sanctum');
