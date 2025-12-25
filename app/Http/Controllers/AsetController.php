@@ -308,17 +308,18 @@ class AsetController extends Controller
             'nilai_transaksi' => 'nullable|numeric|min:0',
             'dasar_persetujuan' => 'nullable|string',
             'tanggal_pemindahan' => 'nullable|date',
-            'upload_bukti' => 'nullable|string',
+            'upload_bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'entitas_tujuan_id' => 'nullable|exists:entitas,id',
             'satker_tujuan_id' => 'nullable|exists:satkers,id',
             'unit_eselon_ii_tujuan_id' => 'nullable|exists:unit_eselon_iis,id',
             'penanggung_jawab_aset_tujuan_id' => 'nullable|exists:penanggung_jawab_asets,id',
+            'created_by' => 'required|integer|exists:users,id',
         ]);
 
         $validated['aset_id'] = $aset->id;
         $validated['nilai_buku_saat_ini'] = $aset->nilai_buku;
         $validated['status'] = 'draft';
-        $validated['created_by'] = $request->user()->id;
+        // $validated['created_by'] = $request->user()->id;
 
         $disposal = PenghapusanPemindahtangananAset::create($validated);
 
