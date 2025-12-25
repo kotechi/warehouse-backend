@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\DropdownController;
 use App\Http\Controllers\Api\V1\KategoriAsetController;
 use App\Http\Controllers\Api\V1\SubkategoriAsetController;
+use App\Http\Controllers\Api\V1\DetailKategoriAsetController;
 use App\Http\Controllers\AsetController;
 
 
@@ -28,6 +29,16 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         Route::get('status-aset', [DropdownController::class, 'statusAset']);
         Route::get('metode-penyusutan', [DropdownController::class, 'metodePenyusutan']);
         Route::get('satuan', [DropdownController::class, 'satuan']);
+    });
+
+    // Detail Kategori Aset Routes
+    Route::prefix('detail-kategori-aset')->middleware('auth:sanctum')->group(function () {
+        Route::get('/', [DetailKategoriAsetController::class, 'index']); // List with filters
+        Route::get('/dropdown', [DetailKategoriAsetController::class, 'dropdown']); // Dropdown
+        Route::post('/', [DetailKategoriAsetController::class, 'store']); // Create
+        Route::get('/{id}', [DetailKategoriAsetController::class, 'show']); // Detail
+        Route::put('/{id}', [DetailKategoriAsetController::class, 'update']); // Update
+        Route::delete('/{id}', [DetailKategoriAsetController::class, 'destroy']); // Delete
     });
 
     Route::prefix('aset')->group(function () {
