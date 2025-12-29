@@ -11,6 +11,7 @@ use App\Models\Stock;
 
 class Barang extends Model
 {
+    use SoftDeletes;
     
     protected $fillable = [
         'produk',
