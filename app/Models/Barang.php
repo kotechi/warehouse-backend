@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\Kategori;
 use App\Models\Divisi;
