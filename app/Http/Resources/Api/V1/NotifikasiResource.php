@@ -14,26 +14,28 @@ class NotifikasiResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return 
-        [
+        return [
             'id' => $this->id,
             'produk' => $this->produk,
             'kodegrp' => $this->kodegrp,
             'stockSekarang' => $this->stock_sekarang,
-            'kategori' => [
+
+            'kategori' => $this->kategori ? [
                 'id' => $this->kategori->id,
                 'kategori' => $this->kategori->kategori,
                 'status' => $this->kategori->status,
                 'createdAt' => $this->kategori->created_at,
                 'updatedAt' => $this->kategori->updated_at,
-            ],
-            'divisi' => [
+            ] : null,
+
+            'divisi' => $this->divisi ? [
                 'id' => $this->divisi->id,
                 'kodeDivisi' => $this->divisi->kodedivisi,
                 'divisi' => $this->divisi->divisi,
                 'short' => $this->divisi->short,
                 'status' => $this->divisi->status,
-            ],
+            ] : null,
         ];
     }
+
 }
