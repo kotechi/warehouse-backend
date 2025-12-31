@@ -25,6 +25,14 @@ class DatabaseSeeder extends Seeder
             'divisi_id' => 1,
             'password' => bcrypt('superadmin123'), 
         ]);
+        Satker::factory()->create([
+            'entitas_id' => 1,
+            'kode_satker' => '001',
+            'nama_satker' => 'Satker Utama',
+            'unit_eselon_i' => 'Unit Eselon I Utama',
+            'alamat' => 'Jl. Contoh Alamat No. 1',
+            'status' => 'active',
+        ]);
         Jabatan::create([
             'jabatan' => 'admin',
         ]);
