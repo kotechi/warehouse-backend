@@ -9,6 +9,10 @@ use App\Http\Controllers\Api\V1\DropdownController;
 use App\Http\Controllers\Api\V1\KategoriAsetController;
 use App\Http\Controllers\Api\V1\SubkategoriAsetController;
 use App\Http\Controllers\Api\V1\DetailKategoriAsetController;
+use App\Http\Controllers\Api\V1\EntitasController;
+use App\Http\Controllers\Api\V1\SatkerController;
+use App\Http\Controllers\Api\V1\UnitEselonIiController;
+use App\Http\Controllers\Api\V1\PenanggungJawabAsetController;
 use App\Http\Controllers\AsetController;
 
 
@@ -77,6 +81,12 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
     Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
     Route::apiResource('user', UserController::class)->middleware('auth:sanctum');
+    
+    // Master Data Routes
+    Route::apiResource('entitas', EntitasController::class)->middleware('auth:sanctum');
+    Route::apiResource('satker', SatkerController::class)->middleware('auth:sanctum');
+    Route::apiResource('unit-eselon-ii', UnitEselonIiController::class)->middleware('auth:sanctum');
+    Route::apiResource('penanggung-jawab-aset', PenanggungJawabAsetController::class)->middleware('auth:sanctum');
     
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('notifikasi/{jumlah_minimum}', [NotifikasiController::class, 'notifikasi'])->middleware('auth:sanctum');
