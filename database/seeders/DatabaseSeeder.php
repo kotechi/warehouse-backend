@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             'nama_entitas' => 'Kementerian UMKM RI',
             'jenis_entitas' => 'kementerian_lembaga',
             'alamat' => '-',
-            'status' => 'active',
+            'status' => 'aktif',
         ]);
 
         // Create Satker
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             'nama_satker' => 'Deputi Bidang Kewirausahaan',
             'unit_eselon_i' => 'Deputi Bidang Kewirausahaan',
             'alamat' => '-',
-            'status' => 'active',
+            'status' => 'aktif',
         ]);
 
         // Create Unit Eselon II
@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
                 'kode_unit' => $unit['kode_unit'],
                 'nama_unit' => $unit['nama_unit'],
                 'deskripsi' => '-',
-                'status' => 'active',
+                'status' => 'aktif',
             ]);
         }
 
