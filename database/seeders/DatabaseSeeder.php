@@ -19,16 +19,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create Jabatan
-        // Jabatan::create([
-        //     'jabatan' => 'Karyawan',
-        // ]);
+        Jabatan::create([
+            'jabatan' => 'Karyawan',
+        ]);
 
         // Create Divisi
-        // Divisi::create([
-        //     'kodedivisi' => 'sa-1',
-        //     'divisi' => 'Super Admin',
-        //     'status' => 'active',
-        // ]);
+        Divisi::create([
+            'kodedivisi' => 'sa-1',
+            'divisi' => 'Super Admin',
+            'status' => 'active',
+        ]);
 
         // Create Entitas
         $entitas = Entitas::create([
@@ -88,13 +88,13 @@ class DatabaseSeeder extends Seeder
         }
 
         // Create User
-        // User::factory()->create([
-        //     'name' => 'superadmin',
-        //     'email' => 'superadmin@gmail.com',
-        //     'role' => 'superadmin',
-        //     'jabatan_id' => 1,
-        //     'divisi_id' => 1,
-        //     'password' => bcrypt('superadmin123'), 
-        // ]);
+        User::factory()->create([
+            'name' => 'superadmin',
+            'email' => 'superadmin@gmail.com',
+            'role' => 'superadmin',
+            'jabatan_id' => 1,
+            'divisi_id' => 1,
+            'password' => bcrypt('superadmin123'), 
+        ]);
     }
 }
