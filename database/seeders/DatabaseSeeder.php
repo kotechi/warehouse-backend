@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $entitas = Entitas::create([
             'kode_entitas' => 'KEMUMKM',
             'nama_entitas' => 'Kementerian UMKM RI',
-            'jenis_entitas' => 'Kementerian',
+            'jenis_entitas' => 'kementerian_lembaga',
             'alamat' => '-',
             'status' => 'active',
         ]);
