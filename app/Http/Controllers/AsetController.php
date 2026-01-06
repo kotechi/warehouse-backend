@@ -91,6 +91,8 @@ class AsetController extends Controller
             'ruangan' => 'nullable|string|max:100',
             'kode_qr' => 'nullable|string|unique:asets,kode_qr',
             'tag_rfid' => 'nullable|string',
+            'foto_aset' => 'nullable|array|max:4',
+            'foto_aset.*' => 'file|mimes:jpg,jpeg,png,gif,bmp|max:2048',
             'created_by' => 'required|integer|exists:users,id', 
         ]);
 
@@ -100,6 +102,18 @@ class AsetController extends Controller
             // $validated['created_by'] = auth()->id();
             
             $validated['mata_uang'] = $validated['mata_uang'] ?? 'IDR';
+            
+            // Handle foto aset upload
+            if ($request->hasFile('foto_aset')) {
+                $fotoPaths = [];
+                foreach ($request->file('foto_aset') as $index => $file) {
+                    $fileName = 'asset_' . time() . '_' . ($index + 1) . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('asset-photos', $fileName, 'public');
+                    $fotoPaths[] = $path;
+                }
+                $validated['foto_aset'] = $fotoPaths;
+            }
+            
             $aset = Aset::create($validated);
 
             // Auto-generate penyusutan jika aset tetap dan memiliki umur manfaat
@@ -150,6 +164,15 @@ class AsetController extends Controller
         // Add computed values
         $aset->nilai_buku_terkini = $aset->nilai_buku;
         $aset->akumulasi_penyusutan_terkini = $aset->akumulasi_penyusutan;
+        
+        // Format foto aset URLs
+        if ($aset->foto_aset && is_array($aset->foto_aset)) {
+            $aset->foto_aset_urls = collect($aset->foto_aset)->map(function($path) {
+                return asset('storage/' . $path);
+            })->toArray();
+        } else {
+            $aset->foto_aset_urls = [];
+        }
 
         return response()->json($aset);
     }
