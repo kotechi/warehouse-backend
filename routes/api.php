@@ -8,6 +8,11 @@ use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\DropdownController;
 use App\Http\Controllers\Api\V1\KategoriAsetController;
 use App\Http\Controllers\Api\V1\SubkategoriAsetController;
+use App\Http\Controllers\Api\V1\DetailKategoriAsetController;
+use App\Http\Controllers\Api\V1\EntitasController;
+use App\Http\Controllers\Api\V1\SatkerController;
+use App\Http\Controllers\Api\V1\UnitEselonIiController;
+use App\Http\Controllers\Api\V1\PenanggungJawabAsetController;
 use App\Http\Controllers\AsetController;
 
 
@@ -30,6 +35,16 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         Route::get('satuan', [DropdownController::class, 'satuan']);
     });
 
+    // Detail Kategori Aset Routes
+    Route::prefix('detail-kategori-aset')->middleware('auth:sanctum')->group(function () {
+        Route::get('/', [DetailKategoriAsetController::class, 'index']); // List with filters
+        Route::get('/dropdown', [DetailKategoriAsetController::class, 'dropdown']); // Dropdown
+        Route::post('/', [DetailKategoriAsetController::class, 'store']); // Create
+        Route::get('/{id}', [DetailKategoriAsetController::class, 'show']); // Detail
+        Route::put('/{id}', [DetailKategoriAsetController::class, 'update']); // Update
+        Route::delete('/{id}', [DetailKategoriAsetController::class, 'destroy']); // Delete
+    });
+
     Route::prefix('aset')->group(function () {
         // CRUD Aset
         Route::get('/', [AsetController::class, 'index']); // List all assets with filters
@@ -48,8 +63,9 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
         // Penghapusan/Pemindahtanganan
         Route::post('/{id}/disposal', [AsetController::class, 'initiateDisposal']); // Initiate disposal/transfer
         
-        // Statistics
+        // Statistics & Warnings
         Route::get('/statistics/summary', [AsetController::class, 'getStatistics']); // Get asset statistics
+        Route::get('/warnings/near-expiration', [AsetController::class, 'getAssetsNearExpiration']); // Get assets near expiration
     })->middleware('auth:sanctum');
     Route::apiResource('barang', BarangController::class)->middleware('auth:sanctum');
     Route::post('barang/{id}/stock-in', [BarangController::class, 'stockIn'])->middleware('auth:sanctum');
@@ -65,6 +81,12 @@ Route::group(['prefix' => 'v1' ,'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::apiResource('jabatan', JabatanController::class)->middleware('auth:sanctum');
     Route::apiResource('activitylog', ActivityLogController::class)->middleware('auth:sanctum');
     Route::apiResource('user', UserController::class)->middleware('auth:sanctum');
+    
+    // Master Data Routes
+    Route::apiResource('entitas', EntitasController::class)->middleware('auth:sanctum');
+    Route::apiResource('satker', SatkerController::class)->middleware('auth:sanctum');
+    Route::apiResource('unit-eselon-ii', UnitEselonIiController::class)->middleware('auth:sanctum');
+    Route::apiResource('penanggung-jawab-aset', PenanggungJawabAsetController::class)->middleware('auth:sanctum');
     
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('notifikasi/{jumlah_minimum}', [NotifikasiController::class, 'notifikasi'])->middleware('auth:sanctum');

@@ -25,7 +25,6 @@ class Aset extends Model
         'nilai_perolehan',
         'mata_uang',
         'sumber_perolehan',
-        'keterangan_sumber_perolehan',
         'entitas_id',
         'satker_id',
         'unit_eselon_ii_id',
@@ -37,6 +36,7 @@ class Aset extends Model
         'umur_manfaat_bulan',
         'metode_penyusutan',
         'nilai_residu',
+        'akumulasi_penyusutan',
         'lokasi_fisik',
         'ruangan',
         'kode_qr',
@@ -61,6 +61,7 @@ class Aset extends Model
         'tanggal_mulai_digunakan' => 'date',
         'umur_manfaat_bulan' => 'integer',
         'nilai_residu' => 'decimal:2',
+        'akumulasi_penyusutan' => 'decimal:2',
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'deleted_at' => 'datetime',
@@ -155,5 +156,36 @@ class Aset extends Model
         }
         
         return 0;
+    }
+
+    // Check if asset is near expiration (48 hours)
+    public function isNearExpiration()
+    {
+        if (!$this->tanggal_mulai_digunakan || !$this->umur_manfaat_bulan) {
+            return false;
+        }
+
+        $expirationDate = $this->tanggal_mulai_digunakan->copy()->addMonths($this->umur_manfaat_bulan);
+        $hoursUntilExpiration = now()->diffInHours($expirationDate, false);
+
+        return $hoursUntilExpiration > 0 && $hoursUntilExpiration <= 48;
+    }
+
+    // Get expiration date
+    public function getExpirationDateAttribute()
+    {
+        if (!$this->tanggal_mulai_digunakan || !$this->umur_manfaat_bulan) {
+            return null;
+        }
+
+        return $this->tanggal_mulai_digunakan->copy()->addMonths($this->umur_manfaat_bulan);
+    }
+
+    // Scope for assets near expiration
+    public function scopeNearExpiration($query)
+    {
+        return $query->whereNotNull('tanggal_mulai_digunakan')
+            ->whereNotNull('umur_manfaat_bulan')
+            ->whereRaw('DATE_ADD(tanggal_mulai_digunakan, INTERVAL umur_manfaat_bulan MONTH) BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 48 HOUR)');
     }
 }
