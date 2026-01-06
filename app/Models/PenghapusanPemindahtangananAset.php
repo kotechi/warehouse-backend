@@ -49,6 +49,7 @@ class PenghapusanPemindahtangananAset extends Model
         'penanggung_jawab_aset_tujuan_id' => 'integer',
         'tanggal_persetujuan' => 'date',
         'tanggal_pemindahan' => 'date',
+        'upload_bukti' => 'array',
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'approved_by' => 'integer',

@@ -309,8 +309,8 @@ class AsetController extends Controller
             'nilai_transaksi' => 'nullable|numeric|min:0',
             'dasar_persetujuan' => 'nullable|string',
             'tanggal_pemindahan' => 'nullable|date',
-            'foto_aset' => 'nullable|array|max:4',
-            'foto_aset.*' => 'file|mimes:jpg,jpeg,png,gif,bmp|max:2048',
+            'upload_bukti' => 'nullable|array|max:4',
+            'upload_bukti.*' => 'file|mimes:jpg,jpeg,png,gif,bmp|max:2048',
             'entitas_tujuan_id' => 'nullable|exists:entitas,id',
             'satker_tujuan_id' => 'nullable|exists:satkers,id',
             'unit_eselon_ii_tujuan_id' => 'nullable|exists:unit_eselon_iis,id',
@@ -322,15 +322,15 @@ class AsetController extends Controller
         $validated['nilai_buku_saat_ini'] = $aset->nilai_buku;
         $validated['status'] = 'draft';
 
-        // Handle foto aset upload
-        if ($request->hasFile('foto_aset')) {
+        // Handle upload bukti (foto aset)
+        if ($request->hasFile('upload_bukti')) {
             $fotoPaths = [];
-            foreach ($request->file('foto_aset') as $index => $file) {
+            foreach ($request->file('upload_bukti') as $index => $file) {
                 $fileName = 'disposal_' . $aset->id . '_' . time() . '_' . ($index + 1) . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('disposal-photos', $fileName, 'public');
                 $fotoPaths[] = $path;
             }
-            $validated['foto_aset'] = json_encode($fotoPaths);
+            $validated['upload_bukti'] = $fotoPaths; // Tidak perlu json_encode, casting array sudah handle
         }
 
         // $validated['created_by'] = $request->user()->id;
