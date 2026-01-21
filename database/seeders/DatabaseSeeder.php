@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            PkwuSeeder::class,
+        ]);
         // Create Jabatan
         Jabatan::create([
             'jabatan' => 'Karyawan',
