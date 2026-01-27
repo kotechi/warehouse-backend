@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('jabatan', 'divisi')->get()->whereIsNot('role', 'superadmin');
+        $users = User::with('jabatan', 'divisi')->where('role', '!=', 'superadmin')->get();
         return UserResource::collection($users);
     }
 
