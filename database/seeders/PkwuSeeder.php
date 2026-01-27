@@ -17,17 +17,17 @@ class PkwuSeeder extends Seeder
     {
         // Import from CSV
         $csvFile = database_path('seeders/pkwu.csv');
-        
+
         if (!file_exists($csvFile)) {
             $this->command->error("File CSV tidak ditemukan: {$csvFile}");
             return;
         }
 
         $file = fopen($csvFile, 'r');
-        
+
         // Skip header row
         fgetcsv($file, 0, ';');
-        
+
         $rowNumber = 1;
         while (($row = fgetcsv($file, 0, ';')) !== false) {
             // Skip empty rows
@@ -59,7 +59,7 @@ class PkwuSeeder extends Seeder
 
             // Find matching Unit Eselon II
             $unitEselonIi = null;
-            
+
             if (str_contains($unitKerja, 'Sekretariat Deputi')) {
                 $unitEselonIi = UnitEselonIi::where('kode_unit', 'SEKDEP')->first();
             } elseif (str_contains($unitKerja, 'Ekosistem Bisnis')) {
@@ -96,7 +96,7 @@ class PkwuSeeder extends Seeder
         }
 
         fclose($file);
-        
+
         $this->command->info("Total rows imported: " . ($rowNumber - 1));
     }
 }

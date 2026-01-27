@@ -13,27 +13,19 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call([
-            PkwuSeeder::class,
-        ]);
-        // Create Jabatan
+        // 1. MASTER DATA
         Jabatan::create([
             'jabatan' => 'Karyawan',
         ]);
 
-        // Create Divisi
         Divisi::create([
             'kodedivisi' => 'sa-1',
             'divisi' => 'Super Admin',
             'status' => 'active',
         ]);
 
-        // Create Entitas
         $entitas = Entitas::create([
             'kode_entitas' => 'KEMUMKM',
             'nama_entitas' => 'Kementerian UMKM RI',
@@ -42,7 +34,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'aktif',
         ]);
 
-        // Create Satker
         $satker = Satker::create([
             'entitas_id' => $entitas->id,
             'kode_satker' => 'DEPUTI-KEWIRAUSAHAAN',
@@ -52,32 +43,14 @@ class DatabaseSeeder extends Seeder
             'status' => 'aktif',
         ]);
 
-        // Create Unit Eselon II
+        // 2. UNIT ESELON II
         $unitEselonIIs = [
-            [
-                'kode_unit' => 'SEKDEP',
-                'nama_unit' => 'Sekretaris Deputi Bidang Kewirausahaan',
-            ],
-            [
-                'kode_unit' => 'ASDEP-EBW',
-                'nama_unit' => 'Asdep Ekosistem Bisnis Wirausaha',
-            ],
-            [
-                'kode_unit' => 'ASDEP-PIKU',
-                'nama_unit' => 'Asdep Pendampingan Inovasi dan Keberlanjutan Usaha',
-            ],
-            [
-                'kode_unit' => 'ASDEP-PPW',
-                'nama_unit' => 'Asdep Perluasan Pembiayaan Wirausaha',
-            ],
-            [
-                'kode_unit' => 'ASDEP-PJFPKWU',
-                'nama_unit' => 'Asdep Pembinaan JF PKWU',
-            ],
-            [
-                'kode_unit' => 'ASDEP-IDW',
-                'nama_unit' => 'Asdep Inkubasi dan Digitalisasi Wirausaha',
-            ],
+            ['kode_unit' => 'SEKDEP', 'nama_unit' => 'Sekretaris Deputi Bidang Kewirausahaan'],
+            ['kode_unit' => 'ASDEP-EBW', 'nama_unit' => 'Asdep Ekosistem Bisnis Wirausaha'],
+            ['kode_unit' => 'ASDEP-PIKU', 'nama_unit' => 'Asdep Pendampingan Inovasi dan Keberlanjutan Usaha'],
+            ['kode_unit' => 'ASDEP-PPW', 'nama_unit' => 'Asdep Perluasan Pembiayaan Wirausaha'],
+            ['kode_unit' => 'ASDEP-PJFPKWU', 'nama_unit' => 'Asdep Pembinaan JF PKWU'],
+            ['kode_unit' => 'ASDEP-IDW', 'nama_unit' => 'Asdep Inkubasi dan Digitalisasi Wirausaha'],
         ];
 
         foreach ($unitEselonIIs as $unit) {
@@ -90,14 +63,19 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Create User
-        User::factory()->create([
+        // 3. USER (WAJIB SEBELUM PKWU)
+        $user = User::factory()->create([
             'name' => 'superadmin',
             'email' => 'superadmin@gmail.com',
             'role' => 'superadmin',
             'jabatan_id' => 1,
             'divisi_id' => 1,
-            'password' => bcrypt('superadmin123'), 
+            'password' => bcrypt('superadmin123'),
+        ]);
+
+        // 4. BARU JALANKAN PKWU
+        $this->call([
+            PkwuSeeder::class,
         ]);
     }
 }
