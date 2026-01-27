@@ -62,6 +62,7 @@ class Aset extends Model
         'umur_manfaat_bulan' => 'integer',
         'nilai_residu' => 'decimal:2',
         'akumulasi_penyusutan' => 'decimal:2',
+        'foto_aset' => 'array',
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'deleted_at' => 'datetime',

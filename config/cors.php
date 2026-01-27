@@ -1,6 +1,13 @@
 <?php
+// config/cors.php
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
+    'paths' => [
+        'api/*', 
+        'sanctum/csrf-cookie', 
+        'login', 
+        'logout',
+        'storage/*'  
+    ],
     'allowed_methods' => ['*'],
     'allowed_origins' => [
         env('APP_FRONTEND_URL', 'http://localhost:3000'),
